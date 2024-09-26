@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Add Jury Member{% endblock %}
+
+{% block content %}
+    <h2>Add New Jury Member</h2>
+    <form method="POST" action="{{ url_for('add_jury') }}">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="surname">Surname:</label>
+            <input type="text" class="form-control" id="surname" name="surname" required>
+        </div>
+        <div class="form-group">
+            <label for="age">Age:</label>
+            <input type="number" class="form-control" id="age" name="age" required>
+        </div>
+        <div class="form-group">
+            <label for="city">City:</label>
+            <input type="text" class="form-control" id="city" name="city" required>
+        </div>
+        <div class="form-group">
+            <label for="birth">Date of Birth:</label>
+            <input type="date" class="form-control" id="birth" name="birth" required>
+        </div>
+        <div class="form-group">
+            <label for="phone_number">Phone Number:</label>
+            <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+        </div>
+        <div class="form-group">
+            <label for="position">Position:</label>
+            <input type="text" class="form-control" id="position" name="position" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Jury Member</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,98 @@
+<aside>
+    <ul class="menu">
+        <li class="has-submenu">
+            <a href="#">Ефіри</a>
+            <ul class="submenu">
+                <li><a href="/goods/circulation">Розклад ефірів</a></li>
+                <li><a href="/goods/circulation">Товарообіг</a></li>
+            </ul>
+        </li>
+
+
+
+        <li class="has-submenu">
+            <a href="/sequences">Послідовності</a>
+            <ul class="submenu">
+                <li><a href="/sequence/create">Cтворити послідовність</a></li>
+            </ul>
+        </li>
+
+
+
+        <li class="has-submenu">
+            <a href="/contestants">Учасники</a>
+            <ul class="submenu">
+                <li><a href="/contestant/add">Додати учасника</a></li>
+            </ul>
+        </li>
+
+        <li class="has-submenu">
+            <a href="/jury">Склад журі</a>
+            <ul class="submenu">
+                <li>
+                    <a href="/jury/add">Додати журі</a>
+                </li>
+            </ul>
+        </li>
+
+
+        <li class="has-submenu">
+            <a href="/songs" > Пісні</a>
+            <ul class="submenu">
+                <li><a href="/songs/add">Додати пісню</a></li>
+            </ul>
+        </li>
+        <li><a href="/logout">Вийти</a></li>
+    </ul>
+</aside>
+
+<style>
+    aside {
+        background-color: #f4f4f4;
+        padding: 20px;
+        width: 200px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow-y: auto;
+    }
+
+    .menu {
+        list-style: none;
+        padding: 0;
+    }
+
+    .menu > li {
+        margin-bottom: 10px;
+    }
+
+    .menu a {
+        text-decoration: none;
+        color: #333;
+        display: block;
+        padding: 8px;
+        border-radius: 5px;
+    }
+
+    .menu a:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .submenu {
+        list-style: none;
+        padding: 0;
+        margin-left: 20px;
+        display: none;
+    }
+
+    .submenu li {
+        margin-bottom: 5px;
+    }
+
+    .has-submenu:hover .submenu {
+        display: block;
+    }
+</style>

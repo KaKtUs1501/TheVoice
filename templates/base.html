@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Application{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "layouts/header.html" %}
+    <div class="container">
+        <div class="left-panel">
+            {% include "layouts/left_panel.html" %}
+        </div>
+        <div class="content">
+            {% block content %}
+
+            {% endblock %}
+        </div>
+    </div>
+</body>
+</html>

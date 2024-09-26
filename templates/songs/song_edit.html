@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Song{% endblock %}
+
+{% block content %}
+    <h2>Edit Song</h2>
+    <form method="POST">
+        <div class="form-group"style="width: 200px; margin: 20px auto;">
+            <label for="name">Song Name:</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ song.name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="author">Author:</label>
+            <input type="text" class="form-control" id="author" name="author" value="{{ song.author }}" required>
+        </div>
+        <div class="form-group">
+            <label for="genre">Genre:</label>
+            <input type="text" class="form-control" id="genre" name="genre" value="{{ song.genre }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+{% endblock %}

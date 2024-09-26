@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Jury Member{% endblock %}
+
+{% block content %}
+    <h2>Edit Jury Member</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ jury.name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="surname">Surname</label>
+            <input type="text" class="form-control" id="surname" name="surname" value="{{ jury.surname }}" required>
+        </div>
+        <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number" class="form-control" id="age" name="age" value="{{ jury.age }}" required>
+        </div>
+        <div class="form-group">
+            <label for="city">City</label>
+            <input type="text" class="form-control" id="city" name="city" value="{{ jury.city }}" required>
+        </div>
+        <div class="form-group">
+            <label for="birth">Birth Date</label>
+            <input type="date" class="form-control" id="birth" name="birth" value="{{ jury.birth }}" required>
+        </div>
+        <div class="form-group">
+            <label for="phone_number">Phone Number</label>
+            <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ jury.phone_number }}" required>
+        </div>
+        <div class="form-group">
+            <label for="position">Position</label>
+            <input type="text" class="form-control" id="position" name="position" value="{{ jury.position }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+{% endblock %}

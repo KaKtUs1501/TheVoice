@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 300px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-header h2 {
+    margin: 0;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.form-group button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.form-group button:hover {
+    background-color: #0056b3;
+}
+
+.toggle-link, .forgot-password-link {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    cursor: pointer;
+    color: #007bff;
+}
+
+.forgot-password-link {
+    margin-top: 5px;
+}
+
+.toggle-link:hover, .forgot-password-link:hover {
+    text-decoration: underline;
+}
+    </style>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="login-form">
+
+    <div class="form-header">
+        <h2 id="form-title">Login</h2>
+    </div>
+    <form action="/login" method="POST">
+        <div id="login-form">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Login</button>
+            </div>
+            <span class="forgot-password-link" onclick="redirectForgotPassword()">Forgot Password?</span>
+            <span class="toggle-link" onclick="toggleForm()">Register</span>
+        </div>
+    </form>
+    <div id="register-form" style="display: none;">
+        <form action="/register" method="POST">
+        <div class="form-group">
+            <label for="register-username">Username:</label>
+            <input type="text" id="register-username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="register-email">Email:</label>
+            <input type="email" id="register-email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="register-password">Password:</label>
+            <input type="password" id="register-password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="register-confirm-password">Confirm Password:</label>
+            <input type="password" id="register-confirm-password" name="confirm_password" required>
+        </div>
+        <div class="form-group">
+            <button type="submit">Send</button>
+        </div>
+    </form>
+        <span class="toggle-link" onclick="toggleForm()">Already have an account? Login</span>
+    </div>
+    </div>
+</div>
+<script>
+    function toggleForm() {
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const formTitle = document.getElementById('form-title');
+
+
+        if (loginForm.style.display === 'none') {
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+            formTitle.textContent = 'Login';
+        } else {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+            formTitle.textContent = 'Register';
+        }
+    }
+
+    function redirectForgotPassword() {
+        window.location.href = '/forgot-password'; // Замініть на потрібну URL
+    }
+
+    function login() {
+        alert('Login logic here');
+    }
+
+    function register() {
+        alert('Register logic here');
+    }</script>
+
+</body>
+</html>

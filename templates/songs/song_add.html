@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Add Song{% endblock %}
+
+{% block content %}
+    <h2>Add New Song</h2>
+    <form method="POST" action="{{ url_for('add_song') }}" style="width: 200px; margin: 20px auto;">
+        <div class="form-group">
+            <label for="name">Song Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="author">Author:</label>
+            <input type="text" class="form-control" id="author" name="author" required>
+        </div>
+        <div class="form-group">
+            <label for="genre">Genre:</label>
+            <input type="text" class="form-control" id="genre" name="genre" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Song</button>
+    </form>
+{% endblock %}
