@@ -1,0 +1,32 @@
+<html>
+<head>
+    <title>Add Performance</title>
+</head>
+<body>
+    <h1>Add Performance</h1>
+    <form method="POST" action="{{ url_for('add_performance') }}">
+        <label for="contestant_id">Contestant:</label>
+        <select id="contestant_id" name="contestant_id">
+            {% for contestant in contestants %}
+                <option value="{{ contestant._id }}">{{ contestant.name }} {{ contestant.surname }}</option>
+            {% endfor %}
+        </select><br>
+        <label for="song_id">Song:</label>
+        <select id="song_id" name="song_id">
+            {% for song in songs %}
+                <option value="{{ song._id }}">{{ song.name }}</option>
+            {% endfor %}
+        </select><br>
+        <label for="broadcast_id">Broadcast:</label>
+        <select id="broadcast_id" name="broadcast_id">
+            {% for broadcast in broadcasts %}
+                <option value="{{ broadcast._id }}">{{ broadcast.name }}</option>
+            {% endfor %}
+        </select><br>
+        <label for="order">Order:</label>
+        <input type="number" id="order" name="order" required><br>
+        <button type="submit">Add Performance</button>
+    </form>
+    <a href="{{ url_for('performances') }}">Back to Performances</a>
+</body>
+</html>

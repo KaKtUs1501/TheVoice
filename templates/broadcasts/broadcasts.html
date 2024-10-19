@@ -1,23 +1,28 @@
-{% extends "base.html" %}
 
-{% block title %}Dashboard{% endblock %}
-
+{% extends 'base.html' %}
+{% block title %}Broadcasts{% endblock %}
 {% block content %}
-    <div class="cards">
-            {% for contestant in contestants %}
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ contestant.name }} {{ contestant.surname }}</h5>
-                                <p class="card-text"><strong>Age:</strong> {{ contestant.age }}</p>
-                                <p class="card-text"><strong>City:</strong> {{ contestant.city }}</p>
-                                <p class="card-text"><strong>Birth Date:</strong> {{ contestant.birth }}</p>
-                                <p class="card-text"><strong>Phone Number:</strong> {{ contestant.phone_number }}</p>
-                                <button><a href="{{ url_for('view_contestant', contestant_id=contestant._id) }}">View Profile</a></button>
-                            </div>
-                        </div>
-                    </div>
-            {% endfor %}
-        </div>
-    </div>
+<h1>Broadcasts</h1>
+<a href="{{ url_for('add_broadcast') }}" class="btn btn-success mb-3">Add Broadcast</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Duration</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for broadcast in broadcasts %}
+        <tr>
+            <td>{{ broadcast.name }}</td>
+            <td>{{ broadcast.date }}</td>
+            <td>{{ broadcast.duration }}</td>
+            <td>{{ broadcast.description }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
 {% endblock %}

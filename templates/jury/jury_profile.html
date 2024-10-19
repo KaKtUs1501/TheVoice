@@ -1,18 +1,13 @@
-{% extends "base.html" %}
 
-{% block title %}Jury Member Profile{% endblock %}
-
+{% extends 'base.html' %}
+{% block title %}Jury Profile{% endblock %}
 {% block content %}
-    <div class="card" style="width: 200px; margin: 20px auto;">
-        <div class="card-body">
-            <h3 class="card-title">{{ jury.name }} {{ jury.surname }}</h3>
-            <p class="card-text"><strong>Age:</strong> {{ jury.age }}</p>
-            <p class="card-text"><strong>City:</strong> {{ jury.city }}</p>
-            <p class="card-text"><strong>Birth Date:</strong> {{ jury.birth }}</p>
-            <p class="card-text"><strong>Phone Number:</strong> {{ jury.phone_number }}</p>
-            <p class="card-text"><strong>Position:</strong> {{ jury.position }}</p>
-            <a href="{{ url_for('edit_jury', jury_id=jury._id) }}" class="btn btn-primary">Edit</a>
-            <a method="POST" href="{{ url_for('delete_jury', jury_id=jury._id) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this jury member?');">Delete</a>
-        </div>
-    </div>
+<h1>{{ jury.name }} {{ jury.surname }}</h1>
+<p><strong>Age:</strong> {{ jury.age }}</p>
+<p><strong>City:</strong> {{ jury.city }}</p>
+<p><strong>Phone Number:</strong> {{ jury.phone_number }}</p>
+<p><strong>Position:</strong> {{ jury.position }}</p>
+<a href="{{ url_for('edit_jury', jury_id=jury._id) }}" class="btn btn-warning">Edit</a>
+<a href="{{ url_for('delete_jury', jury_id=jury._id) }}" class="btn btn-danger">Delete</a>
+<a href="{{ url_for('jury') }}" class="btn btn-secondary">Back to Jury Members</a>
 {% endblock %}

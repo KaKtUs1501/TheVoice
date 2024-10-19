@@ -1,23 +1,30 @@
-{% extends "base.html" %}
 
-{% block title %}Jury{% endblock %}
-
+{% extends 'base.html' %}
+{% block title %}Jury Members{% endblock %}
 {% block content %}
-    <div class="cards">
-        {% for jury in jury %}
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ jury.name }} {{ jury.surname }}</h5>
-                        <p class="card-text"><strong>Age:</strong> {{ jury.age }}</p>
-                        <p class="card-text"><strong>City:</strong> {{ jury.city }}</p>
-                        <p class="card-text"><strong>Birth Date:</strong> {{ jury.birth }}</p>
-                        <p class="card-text"><strong>Phone Number:</strong> {{ jury.phone_number }}</p>
-                        <p class="card-text"><strong>Position:</strong> {{ jury.position }}</p>
-                        <button><a href="{{ url_for('view_jury', jury_id=jury._id) }}">View Profile</a></button>
-                    </div>
-                </div>
-            </div>
+<h1>Jury Members</h1>
+<a href="{{ url_for('add_jury') }}" class="btn btn-success mb-3">Add Jury Member</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for jury_member in jury %}
+        <tr>
+            <td>{{ jury_member.name }}</td>
+            <td>{{ jury_member.surname }}</td>
+            <td>
+                <a href="{{ url_for('view_jury', jury_id=jury_member._id) }}" class="btn btn-info btn-sm">View</a>
+                <a href="{{ url_for('edit_jury', jury_id=jury_member._id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{{ url_for('delete_jury', jury_id=jury_member._id) }}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
         {% endfor %}
-    </div>
+    </tbody>
+</table>
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
 {% endblock %}

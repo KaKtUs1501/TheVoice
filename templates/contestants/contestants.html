@@ -1,23 +1,29 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard{% endblock %}
-
+{% extends 'base.html' %}
+{% block title %}Contestants{% endblock %}
 {% block content %}
-    <div class="cards">
-            {% for contestant in contestants %}
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ contestant.name }} {{ contestant.surname }}</h5>
-                                <p class="card-text"><strong>Age:</strong> {{ contestant.age }}</p>
-                                <p class="card-text"><strong>City:</strong> {{ contestant.city }}</p>
-                                <p class="card-text"><strong>Birth Date:</strong> {{ contestant.birth }}</p>
-                                <p class="card-text"><strong>Phone Number:</strong> {{ contestant.phone_number }}</p>
-                                <button><a href="{{ url_for('view_contestant', contestant_id=contestant._id) }}">View Profile</a></button>
-                            </div>
-                        </div>
-                    </div>
-            {% endfor %}
-        </div>
-    </div>
+<h1>Contestants</h1>
+<a href="{{ url_for('add_contestant') }}" class="btn btn-success mb-3">Add Contestant</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for contestant in contestants %}
+        <tr>
+            <td>{{ contestant.name }}</td>
+            <td>{{ contestant.surname }}</td>
+            <td>
+                <a href="{{ url_for('view_contestant', contestant_id=contestant._id) }}" class="btn btn-info btn-sm">View</a>
+                <a href="{{ url_for('edit_contestant', contestant_id=contestant._id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{{ url_for('delete_contestant', contestant_id=contestant._id) }}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
 {% endblock %}

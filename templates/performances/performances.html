@@ -1,0 +1,28 @@
+
+{% extends 'base.html' %}
+{% block title %}Performances{% endblock %}
+{% block content %}
+<h1>Performances</h1>
+<a href="{{ url_for('add_performance') }}" class="btn btn-success mb-3">Add Performance</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Contestant</th>
+            <th>Song</th>
+            <th>Broadcast</th>
+            <th>Order</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for performance in performances %}
+        <tr>
+            <td>{{ performance.contestant_id }}</td>
+            <td>{{ performance.song_id }}</td>
+            <td>{{ performance.broadcast_id }}</td>
+            <td>{{ performance.order }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+{% endblock %}
