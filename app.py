@@ -23,6 +23,7 @@ results_collection = db['results']
 
 song_db = SongDatabase(db_uri="mongodb://localhost:27017/", db_name="voice")
 
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -32,14 +33,17 @@ def login_required(f):
 
     return decorated_function
 
+
 @app.route('/fail')
 def fail():
     return render_template('fail.html')
+
 
 @app.route('/')
 @login_required
 def home():
     return render_template('dashboard.html')
+
 
 # Декоратор для перевірки, чи увійшов користувач у систему
 @app.route('/login', methods=['GET', 'POST'])
@@ -58,6 +62,7 @@ def login():
             return "Incorrect username or password", 400
 
     return render_template('login.html')
+
 
 # Створення маршруту для реєстрації
 @app.route('/register', methods=['GET', 'POST'])
@@ -81,7 +86,10 @@ def register():
         except Exception as e:
             flash(f"An error occurred: {str(e)}", 'danger')
 
+    if request.method == 'GET':
+        return render_template('register.html')
     return render_template('login.html')
+
 
 @app.route('/logout')
 def logout():
@@ -89,16 +97,19 @@ def logout():
     flash('You have been logged out.', 'success')
     return redirect(url_for('login'))
 
+
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     return render_template('dashboard.html')
+
 
 # jury routes
 @app.route('/jury', methods=['GET', 'POST'])
 @login_required
 def jury():
     return render_template('jury/jury.html', jury=list(jury_collection.find()))
+
 
 @app.route('/jury/<jury_id>', methods=['GET', 'POST'])
 @login_required
@@ -109,12 +120,14 @@ def view_jury(jury_id):
         return redirect(url_for('home'))
     return render_template('jury/jury_profile.html', jury=jury_member)
 
+
 @app.route('/jury/<jury_id>/delete')
 @login_required
 def delete_jury(jury_id):
     jury_collection.delete_one({"_id": ObjectId(jury_id)})
     flash('Jury member deleted successfully!', 'success')
     return redirect(url_for('dashboard'))
+
 
 @app.route('/jury/<jury_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -147,6 +160,7 @@ def edit_jury(jury_id):
 
     return render_template('jury/jury_edit.html', jury=jury_member)
 
+
 @app.route('/jury/add', methods=['GET', 'POST'])
 @login_required
 def add_jury():
@@ -173,11 +187,13 @@ def add_jury():
 
     return render_template('jury/jury_add.html')
 
+
 # contestant routes
 @app.route('/contestants', methods=['GET', 'POST'])
 @login_required
 def contestants():
     return render_template('contestants/contestants.html', contestants=list(contestant_collection.find()))
+
 
 @app.route('/contestant/<contestant_id>', methods=['GET', 'POST'])
 @login_required
@@ -188,12 +204,14 @@ def view_contestant(contestant_id):
         return redirect(url_for('home'))
     return render_template('contestants/contestant_profile.html', contestant=contestant)
 
+
 @app.route('/contestants/<contestant_id>/delete')
 @login_required
 def delete_contestant(contestant_id):
     contestant_collection.delete_one({"_id": ObjectId(contestant_id)})
     flash('Contestant deleted successfully!', 'success')
     return redirect(url_for('dashboard'))
+
 
 @app.route('/contestants/<contestant_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -224,6 +242,7 @@ def edit_contestant(contestant_id):
 
     return render_template('contestants/contestant_edit.html', contestant=contestant)
 
+
 @app.route('/contestant/add', methods=['GET', 'POST'])
 @login_required
 def add_contestant():
@@ -248,11 +267,13 @@ def add_contestant():
 
     return render_template('contestants/contestant_add.html')
 
+
 # song routes
 @app.route('/songs', methods=['GET'])
 @login_required
 def songs():
     return render_template('songs/songs.html', songs=list(song_collection.find()))
+
 
 @app.route('/songs/add', methods=['GET', 'POST'])
 @login_required
@@ -272,6 +293,7 @@ def add_song():
 
     return render_template('songs/song_add.html')
 
+
 @app.route('/song/<song_id>', methods=['GET'])
 @login_required
 def view_song(song_id):
@@ -281,12 +303,14 @@ def view_song(song_id):
         return redirect(url_for('songs'))
     return render_template('songs/song_profile.html', song=song)
 
+
 @app.route('/songs/<song_id>/delete')
 @login_required
 def delete_song(song_id):
     song_collection.delete_one({"_id": ObjectId(song_id)})
     flash('Song deleted successfully!', 'success')
     return redirect(url_for('songs'))
+
 
 @app.route('/songs/<song_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -311,11 +335,31 @@ def edit_song(song_id):
 
     return render_template('songs/song_edit.html', song=song)
 
+
 # performance routes
 @app.route('/performances', methods=['GET', 'POST'])
 @login_required
 def performances():
-    return render_template('performances/performances.html', performances=list(performance_collection.find()))
+    performances = list(performance_collection.find())
+
+    # Збираємо всі унікальні contestant_id, song_id і broadcast_id
+    contestant_ids = {performance['contestant_id'] for performance in performances}
+    song_ids = {performance['song_id'] for performance in performances}
+    broadcast_ids = {performance['broadcast_id'] for performance in performances}
+
+    # Фільтруємо контестантів, пісні та трансляції
+    contestants = list(contestant_collection.find({"_id": {"$in": list(contestant_ids)}}))
+    songs = list(song_collection.find({"_id": {"$in": list(song_ids)}}))
+    broadcasts = list(broadcast_collection.find({"_id": {"$in": list(broadcast_ids)}}))
+
+    return render_template(
+        'performances/performances.html',
+        performances=performances,
+        contestants=contestants,
+        songs=songs,
+        broadcasts=broadcasts
+    )
+
 
 @app.route('/performance/create', methods=['GET', 'POST'])
 @login_required
@@ -324,27 +368,46 @@ def add_performance():
         contestant_id = request.form['contestant_id']
         song_id = request.form['song_id']
         broadcast_id = request.form['broadcast_id']
-        order = request.form['order']
+        order = int(request.form['order'])
 
+        # Перевірка: чи вже цей контестант має виступ на цьому ефірі
+        existing_performance = performance_collection.find_one({
+            "contestant_id": ObjectId(contestant_id),
+            "broadcast_id": ObjectId(broadcast_id)
+        })
+        if existing_performance:
+            error_message = 'This contestant already has a performance in this broadcast.'
+            return render_template('performances/performance_add.html', contestants=list(contestant_collection.find()), songs=list(song_collection.find()), broadcasts=list(broadcast_collection.find()), error_message=error_message)
+
+        # Перевірка: чи вже існує виступ на цьому ефірі з таким самим порядком
+        same_order_performance = performance_collection.find_one({
+            "broadcast_id": ObjectId(broadcast_id),
+            "order": order
+        })
+        if same_order_performance:
+            error_message = 'Another contestant already has this order in the same broadcast.'
+            return render_template('performances/performance_add.html', contestants=list(contestant_collection.find()), songs=list(song_collection.find()), broadcasts=list(broadcast_collection.find()), error_message=error_message)
+
+        # Додавання нового виступу
         performance_collection.insert_one({
             "contestant_id": ObjectId(contestant_id),
             "song_id": ObjectId(song_id),
             "broadcast_id": ObjectId(broadcast_id),
-            "order": int(order)
+            "order": order
         })
         flash('Performance added successfully!', 'success')
         return redirect(url_for('performances'))
 
-    contestants = list(contestant_collection.find())
-    songs = list(song_collection.find())
-    broadcasts = list(broadcast_collection.find())
-    return render_template('performances/performance_add.html', contestants=contestants, songs=songs, broadcasts=broadcasts)
+    return render_template('performances/performance_add.html', contestants=list(contestant_collection.find()), songs=list(song_collection.find()), broadcasts=list(broadcast_collection.find()))
+
+
 
 # broadcast routes
 @app.route('/broadcasts', methods=['GET', 'POST'])
 @login_required
 def broadcasts():
     return render_template('broadcasts/broadcasts.html', broadcasts=list(broadcast_collection.find()))
+
 
 @app.route('/broadcast/create', methods=['GET', 'POST'])
 @login_required
@@ -366,11 +429,13 @@ def add_broadcast():
 
     return render_template('broadcasts/broadcast_add.html')
 
+
 # voting routes
 @app.route('/voting', methods=['GET'])
 @login_required
 def voting():
     return render_template('voting/voting.html')
+
 
 @app.route('/voting/phone', methods=['POST'])
 @login_required
@@ -387,6 +452,7 @@ def phone_voting():
     flash('Phone voting recorded successfully!', 'success')
     return redirect(url_for('voting'))
 
+
 @app.route('/voting/sms', methods=['POST'])
 @login_required
 def sms_voting():
@@ -402,6 +468,7 @@ def sms_voting():
     flash('SMS voting recorded successfully!', 'success')
     return redirect(url_for('voting'))
 
+
 # results routes
 @app.route('/results', methods=['GET'])
 @login_required
@@ -413,6 +480,7 @@ def results():
         total_votes = sum([vote["amount"] for vote in phone_votes]) + sum([vote["amount"] for vote in sms_votes])
         results.append({"contestant": contestant, "total_votes": total_votes})
     return render_template('results/results.html', results=results)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

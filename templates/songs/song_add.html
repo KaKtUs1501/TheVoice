@@ -2,20 +2,23 @@
 {% block title %}Add Song{% endblock %}
 {% block content %}
 <h1>Add Song</h1>
+{% if error_message %}
+    <div class="alert alert-danger">{{ error_message }}</div>
+{% endif %}
 <form method="POST" action="{{ url_for('add_song') }}">
     <div class="form-group">
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name" class="form-control" required>
+        <input type="text" id="name" name="name" class="form-control" value="{{ request.form.get('name', '') }}" required>
     </div>
     <div class="form-group">
         <label for="author">Author:</label>
-        <input type="text" id="author" name="author" class="form-control" required>
+        <input type="text" id="author" name="author" class="form-control" value="{{ request.form.get('author', '') }}" required>
     </div>
     <div class="form-group">
         <label for="genre">Genre:</label>
-        <input type="text" id="genre" name="genre" class="form-control" required>
+        <input type="text" id="genre" name="genre" class="form-control" value="{{ request.form.get('genre', '') }}" required>
     </div>
     <button type="submit" class="btn btn-primary">Add Song</button>
 </form>
-<a href="{{ url_for('songs') }}" class="btn btn-secondary">Back to Songs</a>
+<a href="{{ url_for('songs') }}" class="btn btn-secondary mt-3">Back to Songs</a>
 {% endblock %}

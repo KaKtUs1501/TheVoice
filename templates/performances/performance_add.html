@@ -1,32 +1,40 @@
-<html>
-<head>
-    <title>Add Performance</title>
-</head>
-<body>
-    <h1>Add Performance</h1>
-    <form method="POST" action="{{ url_for('add_performance') }}">
+{% extends 'base.html' %}
+{% block title %}Add Performance{% endblock %}
+{% block content %}
+<h1>Add Performance</h1>
+{% if error_message %}
+    <div class="alert alert-danger">{{ error_message }}</div>
+{% endif %}
+<form method="POST" action="{{ url_for('add_performance') }}">
+    <div class="form-group">
         <label for="contestant_id">Contestant:</label>
-        <select id="contestant_id" name="contestant_id">
+        <select id="contestant_id" name="contestant_id" class="form-control">
             {% for contestant in contestants %}
-                <option value="{{ contestant._id }}">{{ contestant.name }} {{ contestant.surname }}</option>
+                <option value="{{ contestant._id }}" {% if contestant._id == request.form.get('contestant_id') %}selected{% endif %}>{{ contestant.name }} {{ contestant.surname }}</option>
             {% endfor %}
-        </select><br>
+        </select>
+    </div>
+    <div class="form-group">
         <label for="song_id">Song:</label>
-        <select id="song_id" name="song_id">
+        <select id="song_id" name="song_id" class="form-control">
             {% for song in songs %}
-                <option value="{{ song._id }}">{{ song.name }}</option>
+                <option value="{{ song._id }}" {% if song._id == request.form.get('song_id') %}selected{% endif %}>{{ song.name }}</option>
             {% endfor %}
-        </select><br>
+        </select>
+    </div>
+    <div class="form-group">
         <label for="broadcast_id">Broadcast:</label>
-        <select id="broadcast_id" name="broadcast_id">
+        <select id="broadcast_id" name="broadcast_id" class="form-control">
             {% for broadcast in broadcasts %}
-                <option value="{{ broadcast._id }}">{{ broadcast.name }}</option>
+                <option value="{{ broadcast._id }}" {% if broadcast._id == request.form.get('broadcast_id') %}selected{% endif %}>{{ broadcast.name }}</option>
             {% endfor %}
-        </select><br>
+        </select>
+    </div>
+    <div class="form-group">
         <label for="order">Order:</label>
-        <input type="number" id="order" name="order" required><br>
-        <button type="submit">Add Performance</button>
-    </form>
-    <a href="{{ url_for('performances') }}">Back to Performances</a>
-</body>
-</html>
+        <input type="number" id="order" name="order" class="form-control" value="{{ request.form.get('order', '') }}" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Performance</button>
+</form>
+<a href="{{ url_for('performances') }}" class="btn btn-secondary mt-3">Back to Performances</a>
+{% endblock %}
