@@ -377,7 +377,9 @@ def add_performance():
         })
         if existing_performance:
             error_message = 'This contestant already has a performance in this broadcast.'
-            return render_template('performances/performance_add.html', contestants=list(contestant_collection.find()), songs=list(song_collection.find()), broadcasts=list(broadcast_collection.find()), error_message=error_message)
+            return render_template('performances/performance_add.html', contestants=list(contestant_collection.find()),
+                                   songs=list(song_collection.find()), broadcasts=list(broadcast_collection.find()),
+                                   error_message=error_message)
 
         # Перевірка: чи вже існує виступ на цьому ефірі з таким самим порядком
         same_order_performance = performance_collection.find_one({
@@ -386,20 +388,90 @@ def add_performance():
         })
         if same_order_performance:
             error_message = 'Another contestant already has this order in the same broadcast.'
-            return render_template('performances/performance_add.html', contestants=list(contestant_collection.find()), songs=list(song_collection.find()), broadcasts=list(broadcast_collection.find()), error_message=error_message)
+            return render_template('performances/performance_add.html', contestants=list(contestant_collection.find()),
+                                   songs=list(song_collection.find()), broadcasts=list(broadcast_collection.find()),
+                                   error_message=error_message)
 
         # Додавання нового виступу
         performance_collection.insert_one({
             "contestant_id": ObjectId(contestant_id),
             "song_id": ObjectId(song_id),
             "broadcast_id": ObjectId(broadcast_id),
-            "order": order
+            "order": order,
+            "phone_votes": 0,
+            "sms_votes": 0,
         })
         flash('Performance added successfully!', 'success')
         return redirect(url_for('performances'))
 
-    return render_template('performances/performance_add.html', contestants=list(contestant_collection.find()), songs=list(song_collection.find()), broadcasts=list(broadcast_collection.find()))
+    return render_template('performances/performance_add.html', contestants=list(contestant_collection.find()),
+                           songs=list(song_collection.find()), broadcasts=list(broadcast_collection.find()))
 
+
+@app.route('/performance/<performance_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_performance(performance_id):
+    performance = performance_collection.find_one({"_id": ObjectId(performance_id)})
+
+    if request.method == 'POST':
+        try:
+            contestant_id = request.form['contestant_id']
+            song_id = request.form['song_id']
+            broadcast_id = request.form['broadcast_id']
+            order = int(request.form['order'])
+
+            # Перевірка: чи вже цей контестант має виступ на цьому ефірі
+            existing_performance = performance_collection.find_one({
+                "contestant_id": ObjectId(contestant_id),
+                "broadcast_id": ObjectId(broadcast_id),
+                "_id": {"$ne": ObjectId(performance_id)}
+            })
+            if existing_performance:
+                error_message = 'This contestant already has a performance in this broadcast.'
+                return render_template('performances/performance_edit.html', performance=performance,
+                                       contestants=list(contestant_collection.find()),
+                                       songs=list(song_collection.find()), broadcasts=list(broadcast_collection.find()),
+                                       error_message=error_message)
+
+            # Перевірка: чи вже існує виступ на цьому ефірі з таким самим порядком
+            same_order_performance = performance_collection.find_one({
+                "broadcast_id": ObjectId(broadcast_id),
+                "order": order,
+                "_id": {"$ne": ObjectId(performance_id)}
+            })
+            if same_order_performance:
+                error_message = 'Another contestant already has this order in the same broadcast.'
+                return render_template('performances/performance_edit.html', performance=performance,
+                                       contestants=list(contestant_collection.find()),
+                                       songs=list(song_collection.find()), broadcasts=list(broadcast_collection.find()),
+                                       error_message=error_message)
+
+            # Оновлення виступу
+            performance_collection.update_one(
+                {"_id": ObjectId(performance_id)},
+                {"$set": {
+                    "contestant_id": ObjectId(contestant_id),
+                    "song_id": ObjectId(song_id),
+                    "broadcast_id": ObjectId(broadcast_id),
+                    "order": order
+                }}
+            )
+            flash('Performance updated successfully!', 'success')
+            return redirect(url_for('performances'))
+        except Exception as e:
+            flash(f"An error occurred: {str(e)}", 'danger')
+
+    return render_template('performances/performance_edit.html', performance=performance,
+                           contestants=list(contestant_collection.find()), songs=list(song_collection.find()),
+                           broadcasts=list(broadcast_collection.find()))
+
+
+@app.route('/performance/<performance_id>/delete')
+@login_required
+def delete_performance(performance_id):
+    performance_collection.delete_one({"_id": ObjectId(performance_id)})
+    flash('Performance deleted successfully!', 'success')
+    return redirect(url_for('performances'))
 
 
 # broadcast routes
@@ -414,13 +486,13 @@ def broadcasts():
 def add_broadcast():
     if request.method == 'POST':
         name = request.form['name']
-        date = request.form['date']
+        date_of_live = request.form['date_of_live']
         duration = request.form['duration']
         description = request.form['description']
 
         broadcast_collection.insert_one({
             "name": name,
-            "date": date,
+            "date_of_live": date_of_live,
             "duration": duration,
             "description": description
         })
@@ -430,46 +502,126 @@ def add_broadcast():
     return render_template('broadcasts/broadcast_add.html')
 
 
-# voting routes
-@app.route('/voting', methods=['GET'])
+@app.route('/broadcast/<broadcast_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_broadcast(broadcast_id):
+    broadcast = broadcast_collection.find_one({"_id": ObjectId(broadcast_id)})
+
+    if request.method == 'POST':
+        try:
+            date_of_live = request.form['date_of_live']
+            duration = request.form['duration']
+            name = request.form['name']
+            description = request.form['description']
+
+            broadcast_collection.update_one(
+                {"_id": ObjectId(broadcast_id)},
+                {"$set": {
+                    "date_of_live": date_of_live,
+                    "duration": duration,
+                    "name": name,
+                    "description": description
+                }}
+            )
+            flash('Broadcast updated successfully!', 'success')
+            return redirect(url_for('broadcasts'))
+        except Exception as e:
+            flash(f"An error occurred: {str(e)}", 'danger')
+
+    return render_template('broadcasts/broadcast_edit.html', broadcast=broadcast,
+                           error_message=request.args.get('error_message'))
+
+
+@app.route('/broadcast/<broadcast_id>/delete')
+@login_required
+def delete_broadcast(broadcast_id):
+    broadcast_collection.delete_one({"_id": ObjectId(broadcast_id)})
+    flash('Broadcast deleted successfully!', 'success')
+    return redirect(url_for('broadcasts'))
+
+
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+@app.route('/voting', methods=['GET', 'POST'])
 @login_required
 def voting():
-    return render_template('voting/voting.html')
+    try:
+        if request.method == 'POST':
+            broadcast_id = request.form['broadcast_id']
+        else:
+            broadcast_id = request.args.get('broadcast_id')
+
+        if broadcast_id:
+            selected_broadcast = broadcast_collection.find_one({'_id': ObjectId(broadcast_id)})
+            performances = list(performance_collection.find({'broadcast_id': ObjectId(broadcast_id)}))
+
+            # Add contestant and song names to performances
+            for performance in performances:
+                contestant = contestant_collection.find_one({'_id': performance['contestant_id']})
+                song = song_collection.find_one({'_id': performance['song_id']})
+                performance[
+                    'contestant_name'] = f"{contestant['name']} {contestant['surname']}" if contestant else 'Unknown Contestant'
+                performance['song_name'] = song['name'] if song else 'Unknown Song'
+
+            return render_template('voting/voting.html', broadcasts=list(broadcast_collection.find()),
+                                   performances=performances, selected_broadcast=selected_broadcast)
+    except Exception as e:
+        logger.error(f"Error in voting route: {str(e)}")
+        flash('An error occurred while loading voting data.', 'danger')
+
+    return render_template('voting/voting.html', broadcasts=list(broadcast_collection.find()), performances=None,
+                           selected_broadcast=None)
 
 
-@app.route('/voting/phone', methods=['POST'])
+@app.route('/select_broadcast_for_voting', methods=['POST'])
 @login_required
-def phone_voting():
-    contestant_id = request.form['contestant_id']
-    broadcast_id = request.form['broadcast_id']
-    amount = int(request.form['amount'])
-
-    phone_voting_collection.insert_one({
-        "contestant_id": ObjectId(contestant_id),
-        "broadcast_id": ObjectId(broadcast_id),
-        "amount": amount
-    })
-    flash('Phone voting recorded successfully!', 'success')
-    return redirect(url_for('voting'))
+def select_broadcast_for_voting():
+    try:
+        broadcast_id = request.form['broadcast_id']
+        return redirect(url_for('voting', broadcast_id=broadcast_id))
+    except Exception as e:
+        logger.error(f"Error in select_broadcast_for_voting route: {str(e)}")
+        flash('An error occurred while selecting the broadcast.', 'danger')
+        return redirect(url_for('voting'))
 
 
-@app.route('/voting/sms', methods=['POST'])
+@app.route('/submit_votes', methods=['POST'])
 @login_required
-def sms_voting():
-    contestant_id = request.form['contestant_id']
-    broadcast_id = request.form['broadcast_id']
-    amount = int(request.form['amount'])
+def submit_votes():
+    broadcast_id = request.form.get('broadcast_id')
+    votes_data = request.form.getlist('votes')
 
-    sms_voting_collection.insert_one({
-        "contestant_id": ObjectId(contestant_id),
-        "broadcast_id": ObjectId(broadcast_id),
-        "amount": amount
-    })
-    flash('SMS voting recorded successfully!', 'success')
-    return redirect(url_for('voting'))
+    if not broadcast_id or not votes_data:
+        flash('Invalid submission. Please try again.', 'danger')
+        return redirect(url_for('broadcasts'))
+
+    for performance_id, votes in request.form.get('votes').items():
+        phone_votes = votes.get('phone_votes')
+        sms_votes = votes.get('sms_votes')
+
+        if phone_votes is None or sms_votes is None:
+            continue
+
+        try:
+            phone_votes = int(phone_votes)
+            sms_votes = int(sms_votes)
+        except ValueError:
+            flash('Please enter valid numbers for votes.', 'danger')
+            return redirect(url_for('broadcasts'))
+
+        db.performances.update_one(
+            {"_id": ObjectId(performance_id)},
+            {"$set": {"phone_votes": phone_votes, "sms_votes": sms_votes}}
+        )
+
+    flash('Votes successfully submitted!', 'success')
+    return redirect(url_for('broadcasts'))
 
 
-# results routes
 @app.route('/results', methods=['GET'])
 @login_required
 def results():
