@@ -15,22 +15,32 @@
 </form>
 
 {% if performances %}
-    <h2 class="mt-4">Vote for Performances in Broadcast: {{ selected_broadcast.name }}</h2>
-    <form method="POST" action="{{ url_for('submit_votes') }}">
-        <input type="hidden" name="broadcast_id" value="{{ selected_broadcast._id }}">
-        {% for performance in performances %}
-        <div class="form-group row align-items-center">
-            <label for="phone_vote_{{ performance._id }}" class="col-sm-4 col-form-label">{{ performance.contestant_name }} - {{ performance.song_name }}:</label>
-            <div class="col-sm-4">
-                <input type="number" id="phone_vote_{{ performance._id }}" name="votes[{{ performance._id }}][phone_votes]" class="form-control" placeholder="Phone Votes" required>
-            </div>
-            <div class="col-sm-4">
-                <input type="number" id="sms_vote_{{ performance._id }}" name="votes[{{ performance._id }}][sms_votes]" class="form-control" placeholder="SMS Votes" required>
-            </div>
-        </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary mt-4">Submit Votes</button>
-    </form>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Contestant</th>
+            <th>Song</th>
+            <th>Broadcast</th>
+            <th>Order</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+             {% for performance in performances %}
+                <tr>
+                    <td>
+                        {% set contestant = contestants | selectattr('_id', 'equalto', performance.contestant_id) | first %}{{ contestant.name if contestant else 'Unknown Contestant' }} {{ contestant.surname if contestant else 'Unknown Contestant' }}</td>
+                    <td>
+                        {% set song = songs | selectattr('_id', 'equalto', performance.song_id) | first %}{{ song.name if song else 'Unknown Song' }}</td>
+                    <td>
+                        {% set broadcast = broadcasts | selectattr('_id', 'equalto', performance.broadcast_id) | first %}{{ broadcast.name if broadcast else 'Unknown Broadcast' }}</td>
+                    <td>{{ performance.order }}</td>
+                    <td>
+                        <a href="{{ url_for('vote_performance', performance_id=performance._id) }}" class="btn btn-primary btn-sm">Vote</a>
+                    </td>
+            {% endfor %}
+      </tbody>
+    </table>
 {% endif %}
 <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-4">Back to Dashboard</a>
 {% endblock %}

@@ -554,26 +554,36 @@ def voting():
         else:
             broadcast_id = request.args.get('broadcast_id')
 
+        selected_broadcast = None
+        performances = []
+        contestants = []
+        songs = []
+        broadcasts = list(broadcast_collection.find())
+
         if broadcast_id:
             selected_broadcast = broadcast_collection.find_one({'_id': ObjectId(broadcast_id)})
             performances = list(performance_collection.find({'broadcast_id': ObjectId(broadcast_id)}))
 
-            # Add contestant and song names to performances
-            for performance in performances:
-                contestant = contestant_collection.find_one({'_id': performance['contestant_id']})
-                song = song_collection.find_one({'_id': performance['song_id']})
-                performance[
-                    'contestant_name'] = f"{contestant['name']} {contestant['surname']}" if contestant else 'Unknown Contestant'
-                performance['song_name'] = song['name'] if song else 'Unknown Song'
+            contestant_ids = {performance['contestant_id'] for performance in performances}
+            song_ids = {performance['song_id'] for performance in performances}
 
-            return render_template('voting/voting.html', broadcasts=list(broadcast_collection.find()),
-                                   performances=performances, selected_broadcast=selected_broadcast)
+            contestants = list(contestant_collection.find({"_id": {"$in": list(contestant_ids)}}))
+            songs = list(song_collection.find({"_id": {"$in": list(song_ids)}}))
+
+        return render_template(
+            'voting/voting.html',
+            broadcasts=broadcasts,
+            performances=performances,
+            contestants=contestants,
+            songs=songs,
+            selected_broadcast=selected_broadcast
+        )
     except Exception as e:
         logger.error(f"Error in voting route: {str(e)}")
         flash('An error occurred while loading voting data.', 'danger')
 
-    return render_template('voting/voting.html', broadcasts=list(broadcast_collection.find()), performances=None,
-                           selected_broadcast=None)
+    return render_template('voting/voting.html', broadcasts=broadcasts, performances=None, selected_broadcast=None)
+
 
 
 @app.route('/select_broadcast_for_voting', methods=['POST'])
