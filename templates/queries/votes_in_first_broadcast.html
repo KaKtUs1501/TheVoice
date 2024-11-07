@@ -1,0 +1,26 @@
+
+
+{% extends 'base.html' %}
+{% block title %}Votes in First Broadcast{% endblock %}
+{% block content %}
+<h1>Votes in First Broadcast</h1>
+<form method="POST">
+    <button type="submit">Search</button>
+</form>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Contestant</th>
+            <th>Total Votes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for result in results %}
+        <tr>
+            <td>{{ result.contestant }}</td>
+            <td>{{ result.total_votes }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

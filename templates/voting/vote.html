@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Vote for Performance{% endblock %}
+{% block content %}
+<h1>Vote for {{ performance.contestant_name }}'s Performance</h1>
+<form method="POST" action="{{ url_for('vote_performance', performance_id=performance._id) }}">
+    <div class="mb-3">
+        <label for="phone_number" class="form-label">Phone Number</label>
+        <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+    </div>
+    <div class="mb-3">
+        <label for="voteTypeSelect" class="form-label">Select Vote Type</label>
+        <select class="form-control" id="voteTypeSelect" name="vote_type">
+            <option value="phone">Phone Vote</option>
+            <option value="sms">SMS Vote</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Vote</button>
+    <a href="{{ url_for('performances') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

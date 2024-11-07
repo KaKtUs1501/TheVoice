@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Broadcast Schedule{% endblock %}
+{% block content %}
+<h1>Broadcast Schedule</h1>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Duration</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for broadcast in broadcasts %}
+        <tr>
+            <td>{{ broadcast.name }}</td>
+            <td>{{ broadcast.date_of_live }}</td>
+            <td>{{ broadcast.duration }}</td>
+            <td>{{ broadcast.description }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

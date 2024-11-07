@@ -1,7 +1,7 @@
 import os
 from functools import wraps
 from models import *
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from pymongo import MongoClient
 from bson import ObjectId
 
@@ -18,7 +18,7 @@ sequence_collection = db['sequence']
 performance_collection = db['performance']
 broadcast_collection = db['live_broadcast']
 phone_voting_collection = db['phone_voting']
-sms_voting_collection = db['sms_voting']
+sms_voting_collection = db['SMS_voting']
 results_collection = db['results']
 
 song_db = SongDatabase(db_uri="mongodb://localhost:27017/", db_name="voice")
@@ -513,7 +513,6 @@ def edit_broadcast(broadcast_id):
             duration = request.form['duration']
             name = request.form['name']
             description = request.form['description']
-
             broadcast_collection.update_one(
                 {"_id": ObjectId(broadcast_id)},
                 {"$set": {
@@ -627,11 +626,199 @@ def submit_votes():
 def results():
     results = []
     for contestant in contestant_collection.find():
-        phone_votes = phone_voting_collection.find({"contestant_id": contestant["_id"]})
-        sms_votes = sms_voting_collection.find({"contestant_id": contestant["_id"]})
-        total_votes = sum([vote["amount"] for vote in phone_votes]) + sum([vote["amount"] for vote in sms_votes])
-        results.append({"contestant": contestant, "total_votes": total_votes})
+        # Підраховуємо кількість телефонних голосів для кожного конкурсанта
+        phone_votes_count = phone_voting_collection.count_documents({"contestant_id": contestant["_id"]})
+
+        # Підраховуємо кількість SMS голосів для кожного конкурсанта
+        sms_votes_count = sms_voting_collection.count_documents({"contestant_id": contestant["_id"]})
+
+        # Загальна кількість голосів
+        total_votes = phone_votes_count + sms_votes_count
+
+        results.append({
+            "contestant": contestant,
+            "total_votes": total_votes
+        })
+
     return render_template('results/results.html', results=results)
+@app.route('/performance/<performance_id>/vote', methods=['GET', 'POST'])
+@login_required
+def vote_performance(performance_id):
+    # Знаходимо перформанс та його дані
+    performance = performance_collection.find_one({"_id": ObjectId(performance_id)})
+    broadcast_id = performance["broadcast_id"] if performance else None
+    contestant_id = performance["contestant_id"] if performance else None
+
+    if request.method == 'POST' and broadcast_id and contestant_id:
+        phone_number = request.form['phone_number']
+        vote_type = request.form['vote_type']
+
+        # Формуємо дані для голосу, включаючи broadcast_id і contestant_id
+        vote_data = {
+            "performance_id": ObjectId(performance_id),
+            "broadcast_id": broadcast_id,
+            "contestant_id": contestant_id,
+            "phone_number": phone_number
+        }
+
+        if vote_type == 'sms':
+            sms_voting_collection.insert_one(vote_data)
+        else:
+            phone_voting_collection.insert_one(vote_data)
+
+        flash('Vote recorded successfully!', 'success')
+        return redirect(url_for('performances'))
+
+    return render_template('voting/vote.html', performance=performance)
+
+
+# requests
+
+# Routes for executing queries
+
+@app.route('/performers_by_song_and_city', methods=['GET', 'POST'])
+@login_required
+def performers_by_song_and_city():
+    songs = list(song_collection.find())
+    cities = contestant_collection.distinct('city')
+    performers = []
+    if request.method == 'POST':
+        song = request.form.get('song')
+        city = request.form.get('city')
+        performers = list(contestant_collection.find({"city": city, "song": song}))
+    return render_template('queries/performers_by_song_and_city.html', songs=songs, cities=cities,
+                           performers=performers)
+
+
+@app.route('/artists_and_songs_by_broadcast', methods=['GET', 'POST'])
+@login_required
+def artists_and_songs_by_broadcast():
+    broadcasts = list(broadcast_collection.find())
+    results = []
+    if request.method == 'POST':
+        broadcast_id = request.form.get('broadcast')
+        performances = list(db['performance'].find({"broadcast_id": ObjectId(broadcast_id)}))
+        for performance in performances:
+            contestant = contestant_collection.find_one({"_id": performance["contestant_id"]})
+            song = song_collection.find_one({"_id": performance["song_id"]})
+            if contestant and song:
+                results.append({
+                    "contestant": f"{contestant['name']} {contestant['surname']}",
+                    "song": song['name']
+                })
+    return render_template('queries/artists_and_songs_by_broadcast.html', broadcasts=broadcasts, results=results)
+
+
+@app.route('/contestant_performed_songs', methods=['GET', 'POST'])
+@login_required
+def contestant_performed_songs():
+    contestants = list(contestant_collection.find())
+    song_data = {}
+    if request.method == 'POST':
+        contestant_id = request.form.get('contestant_id')
+        performances = list(db['performance'].find({"contestant_id": ObjectId(contestant_id)}))
+        for performance in performances:
+            song_id = performance.get("song_id")
+            song = song_collection.find_one({"_id": ObjectId(song_id)})
+            if song:
+                song_data[song["name"]] = song_data.get(song["name"], 0) + 1
+    return render_template('queries/contestant_performed_songs.html', contestants=contestants, song_data=song_data)
+
+
+@app.route('/contestant_under_200_votes', methods=['GET', 'POST'])
+@login_required
+def contestant_under_200_votes():
+    contestants = list(contestant_collection.find())
+    results = []
+    if request.method == 'POST':
+        for contestant in contestants:
+            total_votes = phone_voting_collection.count_documents({"contestant_id": contestant["_id"]}) + \
+                          sms_voting_collection.count_documents({"contestant_id": contestant["_id"]})
+            if total_votes < 200:
+                results.append(contestant)
+    return render_template('queries/contestant_under_200_votes.html', contestants=results)
+
+
+@app.route('/votes_in_first_broadcast', methods=['GET', 'POST'])
+@login_required
+def votes_in_first_broadcast():
+    broadcasts = list(broadcast_collection.find().sort("date", 1))
+    results = []
+    if request.method == 'POST':
+        first_broadcast = broadcasts[0] if broadcasts else None
+        if first_broadcast:
+            broadcast_id = first_broadcast["_id"]
+            contestants = list(contestant_collection.find())
+            for contestant in contestants:
+                total_votes = phone_voting_collection.count_documents(
+                    {"contestant_id": contestant["_id"], "broadcast_id": broadcast_id}) + \
+                              sms_voting_collection.count_documents(
+                                  {"contestant_id": contestant["_id"], "broadcast_id": broadcast_id})
+                results.append(
+                    {"contestant": f"{contestant['name']} {contestant['surname']}", "total_votes": total_votes})
+    return render_template('queries/votes_in_first_broadcast.html', broadcasts=broadcasts, results=results)
+
+
+@app.route('/broadcast_schedule', methods=['GET', 'POST'])
+@login_required
+def broadcast_schedule():
+    broadcasts = list(broadcast_collection.find().sort("date_of_live", 1))
+    return render_template('queries/broadcast_schedule.html', broadcasts=broadcasts)
+
+
+@app.route('/max_sms_votes', methods=['GET', 'POST'])
+@login_required
+def max_sms_votes():
+    max_votes = 0
+    winner = None
+    contestants = list(contestant_collection.find())
+    if request.method == 'POST':
+        for contestant in contestants:
+            total_votes = sms_voting_collection.count_documents({"contestant_id": contestant["_id"]})
+            if total_votes > max_votes:
+                max_votes = total_votes
+                winner = contestant
+    return render_template('queries/max_sms_votes.html', winner=winner, total_votes=max_votes)
+
+
+@app.route('/winner_of_contest', methods=['GET', 'POST'])
+@login_required
+def winner_of_contest():
+    max_votes = 0
+    winner = None
+    contestants = list(contestant_collection.find())
+    if request.method == 'POST':
+        for contestant in contestants:
+            total_votes = phone_voting_collection.count_documents({"contestant_id": contestant["_id"]}) + \
+                          sms_voting_collection.count_documents({"contestant_id": contestant["_id"]})
+            if total_votes > max_votes:
+                max_votes = total_votes
+                winner = contestant
+    return render_template('queries/winner_of_contest.html', winner=winner, total_votes=max_votes)
+
+
+@app.route('/sms_messages_per_broadcast', methods=['GET', 'POST'])
+@login_required
+def sms_messages_per_broadcast():
+    broadcasts = list(broadcast_collection.find())
+    sms_counts = []
+    if request.method == 'POST':
+        for broadcast in broadcasts:
+            count = sms_voting_collection.count_documents({"broadcast_id": broadcast["_id"]})
+            sms_counts.append({"broadcast": broadcast["name"], "count": count})
+    return render_template('queries/sms_messages_per_broadcast.html', broadcasts=broadcasts, sms_counts=sms_counts)
+
+
+@app.route('/calls_from_number', methods=['GET', 'POST'])
+@login_required
+def calls_from_number():
+    broadcasts = list(broadcast_collection.find())
+    total_calls = 0
+    phone_number = request.form.get('phoneNumber')
+    broadcast_id = request.form.get('broadcast')
+    calls = list(phone_voting_collection.find({"phone_number": phone_number, "broadcast_id": ObjectId(broadcast_id)}))
+    total_calls = len(calls)
+    return render_template('queries/calls_from_number.html', broadcasts=broadcasts, total_calls=total_calls)
 
 
 if __name__ == '__main__':

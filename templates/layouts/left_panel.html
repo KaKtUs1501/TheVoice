@@ -7,4 +7,23 @@
     <a href="{{ url_for('broadcasts') }}" class="list-group-item list-group-item-action">Broadcasts</a>
     <a href="{{ url_for('voting') }}" class="list-group-item list-group-item-action">Voting</a>
     <a href="{{ url_for('results') }}" class="list-group-item list-group-item-action">Results</a>
+    <div class="list-group-item list-group-item-action">
+        <a class="collapsed" data-toggle="collapse" href="#queriesCollapse" role="button" aria-expanded="false" aria-controls="queriesCollapse">
+            Queries
+        </a>
+        <div class="collapse" id="queriesCollapse">
+            <div class="list-group">
+                <a href="{{ url_for('performers_by_song_and_city') }}" class="list-group-item list-group-item-action">Performers by Song and City</a>
+                <a href="{{ url_for('artists_and_songs_by_broadcast') }}" class="list-group-item list-group-item-action">Artists and Songs by Broadcast</a>
+                <a href="{{ url_for('contestant_performed_songs') }}" class="list-group-item list-group-item-action">Contestant Performed Songs</a>
+                <a href="{{ url_for('contestant_under_200_votes') }}" class="list-group-item list-group-item-action">Contestants Under 200 Votes</a>
+                <a href="{{ url_for('votes_in_first_broadcast') }}" class="list-group-item list-group-item-action">Votes in First Broadcast</a>
+                <a href="{{ url_for('broadcast_schedule') }}" class="list-group-item list-group-item-action">Broadcast Schedule</a>
+                <a href="{{ url_for('max_sms_votes') }}" class="list-group-item list-group-item-action">Max SMS Votes</a>
+                <a href="{{ url_for('winner_of_contest') }}" class="list-group-item list-group-item-action">Winner of Contest</a>
+                <a href="{{ url_for('sms_messages_per_broadcast') }}" class="list-group-item list-group-item-action">SMS Messages Per Broadcast</a>
+                <a href="{{ url_for('calls_from_number') }}" class="list-group-item list-group-item-action">Calls From Number</a>
+            </div>
+        </div>
+    </div>
 </div>

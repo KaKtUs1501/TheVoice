@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Contestants Under 200 Votes{% endblock %}
+{% block content %}
+<h1>Contestants Under 200 Votes</h1>
+<form method="POST">
+    <button type="submit">Search</button>
+</form>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>City</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for contestant in contestants %}
+        <tr>
+            <td>{{ contestant.name }}</td>
+            <td>{{ contestant.surname }}</td>
+            <td>{{ contestant.city }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

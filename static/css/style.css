@@ -1,15 +1,15 @@
 .container {
     display: flex;
-    width: 300px;
+    width: 100%;
     padding: 20px;
     background-color: #fff;
     border-radius: 10px;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .content {
-    padding-left: 20px;
-    width: 100%;
-    margin-left: 200px;
+    padding-right: 20px;
 }
 
 .form-header {
@@ -20,6 +20,7 @@
 .form-header h2 {
     margin: 0;
 }
+
 
 .form-group {
     margin-bottom: 15px;
@@ -174,4 +175,9 @@ th, td {
 
 th {
     background-color: #f4f4f4;
+}
+
+@media (min-width: 768px) {
+    .col-md-9 {
+        max-width: 65%!important;    }
 }

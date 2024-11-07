@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Max SMS Votes{% endblock %}
+{% block content %}
+<h1>Max SMS Votes</h1>
+<form method="POST">
+    <button type="submit">Search</button>
+</form>
+{% if winner %}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Total Votes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ winner.name }}</td>
+            <td>{{ winner.surname }}</td>
+            <td>{{ total_votes }}</td>
+        </tr>
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

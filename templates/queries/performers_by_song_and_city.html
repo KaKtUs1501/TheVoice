@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Performers by Song and City{% endblock %}
+{% block content %}
+<h1>Performers by Song and City</h1>
+<form method="POST">
+    <label for="song">Song:</label>
+    <select id="song" name="song">
+        <option selected="selected" disabled value="">Виберіть пісню</option>
+        {% for song in songs %}
+        <option value="{{ song._id }}">{{ song.name }}</option>
+        {% endfor %}
+    </select>
+    <label for="city">City:</label>
+    <select id="city" name="city" >
+        <option selected="selected" disabled value="">Виберіть місто</option>
+        {% for city in cities %}
+
+        <option value="{{ city }}">{{ city }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+</form>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>City</th>
+            <th>Song</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for performer in performers %}
+        <tr>
+            <td>{{ performer.name }}</td>
+            <td>{{ performer.surname }}</td>
+            <td>{{ performer.city }}</td>
+            <td>{{ performer.song }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

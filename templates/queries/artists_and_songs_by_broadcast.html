@@ -1,0 +1,31 @@
+
+{% extends 'base.html' %}
+{% block title %}Artists and Songs by Broadcast{% endblock %}
+{% block content %}
+<h1>Artists and Songs by Broadcast</h1>
+<form method="POST">
+    <label for="broadcast">Broadcast:</label>
+    <select id="broadcast" name="broadcast">
+        {% for broadcast in broadcasts %}
+        <option value="{{ broadcast._id }}">{{ broadcast.name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+</form>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Contestant</th>
+            <th>Song</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for result in results %}
+        <tr>
+            <td>{{ result.contestant }}</td>
+            <td>{{ result.song }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Calls from Number{% endblock %}
+{% block content %}
+<h1>Calls from Number</h1>
+<form action="{{ url_for('calls_from_number') }}" method="POST">
+    <label for="phoneNumber">Phone Number:</label>
+    <input type="text" id="phoneNumber" name="phoneNumber" required>
+    <label for="broadcast">Broadcast:</label>
+    <select id="broadcast" name="broadcast">
+        {% for broadcast in broadcasts %}
+        <option value="{{ broadcast._id }}">{{ broadcast.name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+</form>
+{% if total_calls is not none %}
+<p>Total Calls: {{ total_calls }}</p>
+{% endif %}
+{% endblock %}
