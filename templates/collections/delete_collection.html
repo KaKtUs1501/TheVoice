@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Jury Members{% endblock %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="flashes">
+      {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="POST" action="{{ url_for('delete_collection') }}">
+    <label for="collection_name">Виберіть Колекцію для Видалення:</label>
+    <select name="collection_name" id="collection_name" required>
+        <option value="" disabled selected>-- Оберіть Колекцію --</option>
+        {% for collection in collections %}
+            <option value="{{ collection }}">{{ collection }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" onclick="return confirm('Ви впевнені, що хочете видалити цю колекцію? Ця дія є незворотною.')">Видалити Колекцію</button>
+</form>
+
+    <a href="{{ url_for('home') }}">Повернутися до Панелі Управління</a>
+{% endblock %}

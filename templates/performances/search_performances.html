@@ -1,0 +1,72 @@
+
+{% extends 'base.html' %}
+{% block title %}{% endblock %}
+{% block content %}
+    <h1>Пошук Виступів</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('search_performances') }}">
+        <label for="contestant_name">Ім'я Конкурсантів:</label>
+        <input type="text" id="contestant_name" name="contestant_name" placeholder="Введіть ім'я конкурсантів">
+
+        <label for="song_name">Назва Пісні:</label>
+        <input type="text" id="song_name" name="song_name" placeholder="Введіть назву пісні">
+
+        <label for="broadcast_name">Назва Трансляції:</label>
+        <input type="text" id="broadcast_name" name="broadcast_name" placeholder="Введіть назву трансляції">
+        <button type="submit">Пошук</button>
+    </form>
+
+    {% if results %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Конкурсант</th>
+                    <th>Пісня</th>
+                    <th>Трансляція</th>
+                    <th>Порядок</th>
+                    <th>Телефонні Голоси</th>
+                    <th>SMS Голоси</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for performance in results %}
+                <tr>
+                    <td>
+                        {% set contestant = contestant_collection.find_one({'_id': performance.contestant_id}) %}
+                        {{ contestant.name }} {{ contestant.surname }}
+                    </td>
+                    <td>
+                        {% set song = song_collection.find_one({'_id': performance.song_id}) %}
+                        {{ song.name }}
+                    </td>
+                    <td>
+                        {% set broadcast = broadcast_collection.find_one({'_id': performance.broadcast_id}) %}
+                        {{ broadcast.name }}
+                    </td>
+                    <td>{{ performance.order }}</td>
+                    <td>{{ performance.phone_votes }}</td>
+                    <td>{{ performance.sms_votes }}</td>
+                    <td>
+                        <a href="{{ url_for('view_performance', performance_id=performance._id) }}">Переглянути</a>
+                        {% if session['role'] in ['owner', 'administrator', 'operator'] %}
+                            | <a href="{{ url_for('edit_performance', performance_id=performance._id) }}">Редагувати</a>
+                            | <a href="{{ url_for('delete_performance', performance_id=performance._id) }}" onclick="return confirm('Ви впевнені, що хочете видалити цей виступ?')">Видалити</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

@@ -2,13 +2,17 @@
 {% block title %}Contestants{% endblock %}
 {% block content %}
 <h1>Contestants</h1>
-<a href="{{ url_for('add_contestant') }}" class="btn btn-success mb-3">Add Contestant</a>
+  {% if session['role'] in ['owner', 'administrator'] %}
+    <a href="{{ url_for('add_contestant') }}" class="btn btn-success mb-3">Add Contestant</a>
+  {% endif %}
+     <a href="{{ url_for('search_contestants') }}" class="btn mb-3">Search Contestant</a>
+
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Actions</th>
+            <th>Ім'я</th>
+            <th>Прізвище</th>
+            <th>Дії</th>
         </tr>
     </thead>
     <tbody>

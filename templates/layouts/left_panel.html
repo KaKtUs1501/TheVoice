@@ -7,6 +7,14 @@
     <a href="{{ url_for('broadcasts') }}" class="list-group-item list-group-item-action">Broadcasts</a>
     <a href="{{ url_for('voting') }}" class="list-group-item list-group-item-action">Voting</a>
     <a href="{{ url_for('results') }}" class="list-group-item list-group-item-action">Results</a>
+    {% if session['role'] in ['owner'] %}
+        <a href="{{ url_for('create_collection') }}" class="list-group-item list-group-item-action">Створити Нову Колекцію</a>
+        <a href="{{ url_for('delete_collection') }}" class="list-group-item list-group-item-action">Видалити Колекцію</a>
+     {% endif %}
+    {% if session['role'] in ['administrator'] %}
+        <a href="{{ url_for('manage_users') }}" class="list-group-item list-group-item-action">Управління користувачами</a>
+    {% endif %}
+
     <div class="list-group-item list-group-item-action">
         <a class="collapsed" data-toggle="collapse" href="#queriesCollapse" role="button" aria-expanded="false" aria-controls="queriesCollapse">
             Queries

@@ -1,15 +1,18 @@
-
 {% extends 'base.html' %}
 {% block title %}Jury Members{% endblock %}
 {% block content %}
 <h1>Jury Members</h1>
-<a href="{{ url_for('add_jury') }}" class="btn btn-success mb-3">Add Jury Member</a>
-<table class="table table-bordered">
+    {% if session['role'] in ['owner', 'administrator'] %}
+        <a href="{{ url_for('add_jury') }}" class="btn btn-success mb-3">Add Jury Member</a>
+        <table class="table table-bordered">
+    {% endif %}
+     <a href="{{ url_for('search_jury') }}" class="btn mb-3">Search Jury</a>
+
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Actions</th>
+            <th>Ім'я</th>
+            <th>Прізвище</th>
+            <th>Дії</th>
         </tr>
     </thead>
     <tbody>

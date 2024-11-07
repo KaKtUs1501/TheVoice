@@ -15,15 +15,15 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Song</th>
-            <th>Times Performed</th>
+            <th>Пісня</th>
+            <th>Виконано</th>
         </tr>
     </thead>
     <tbody>
         {% for song, count in song_data.items() %}
         <tr>
             <td>{{ song }}</td>
-            <td>{{ count }}</td>
+            <td>{{ count }} разів</td>
         </tr>
         {% endfor %}
     </tbody>

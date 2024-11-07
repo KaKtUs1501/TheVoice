@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}{% endblock %}
+{% block content %}
+        <h1>Пошук Конкурсантів</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('search_contestants') }}">
+            <label for="name">Ім'я:</label>
+            <input type="text" id="name" name="name" placeholder="Введіть ім'я конкурсантів">
+
+            <label for="surname">Прізвище:</label>
+            <input type="text" id="surname" name="surname" placeholder="Введіть прізвище конкурсантів">
+
+            <label for="city">Місто:</label>
+            <input type="text" id="city" name="city" placeholder="Введіть місто">
+
+            <label for="age">Вік:</label>
+            <input type="number" id="age" name="age" placeholder="Введіть вік">
+
+            <button type="submit">Пошук</button>
+        </form>
+
+        {% if results %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ім'я</th>
+                        <th>Прізвище</th>
+                        <th>Вік</th>
+                        <th>Місто</th>
+                        <th>Телефон</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contestant in results %}
+                    <tr>
+                        <td>{{ contestant.name }}</td>
+                        <td>{{ contestant.surname }}</td>
+                        <td>{{ contestant.age }}</td>
+                        <td>{{ contestant.city }}</td>
+                        <td>{{ contestant.phone_number }}</td>
+                        <td>
+                            <a href="{{ url_for('view_contestant', contestant_id=contestant._id) }}">Переглянути</a>
+                            {% if session['role'] in ['owner', 'administrator', 'operator'] %}
+                                | <a href="{{ url_for('edit_contestant', contestant_id=contestant._id) }}">Редагувати</a>
+                                | <a href="{{ url_for('delete_contestant', contestant_id=contestant._id) }}" onclick="return confirm('Ви впевнені, що хочете видалити цього конкурсанта?')">Видалити</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+{% endblock %}

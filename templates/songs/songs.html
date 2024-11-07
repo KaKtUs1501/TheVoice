@@ -3,13 +3,14 @@
 {% block content %}
 <h1>Songs</h1>
 <a href="{{ url_for('add_song') }}" class="btn btn-success mb-3">Add Song</a>
+<a href="{{ url_for('search_songs') }}" class="btn btn-error mb-3">Search songs</a>
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Author</th>
-            <th>Genre</th>
-            <th>Actions</th>
+            <th>Назва</th>
+            <th>Автор</th>
+            <th>Жанр</th>
+            <th>Автор</th>
         </tr>
     </thead>
     <tbody>

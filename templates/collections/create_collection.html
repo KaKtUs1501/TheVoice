@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Jury Members{% endblock %}
+{% block content %}
+    <h1>Створення Нової Колекції</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('create_collection') }}">
+        <label for="collection_name">Назва Колекції:</label>
+        <input type="text" id="collection_name" name="collection_name" required>
+        <button type="submit">Створити</button>
+    </form>
+
+    <a href="{{ url_for('home') }}">Повернутися до Панелі Управління</a>
+{% endblock %}

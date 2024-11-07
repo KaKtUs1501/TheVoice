@@ -1,8 +1,6 @@
-<html>
-<head>
-    <title>Edit Contestant</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title %}{% endblock %}
+{% block content %}
     <h1>Edit Contestant</h1>
     <form method="POST" action="{{ url_for('edit_contestant', contestant_id=contestant._id) }}">
         <label for="name">Name:</label>
@@ -20,5 +18,4 @@
         <button type="submit">Update Contestant</button>
     </form>
     <a href="{{ url_for('contestants') }}">Back to Contestants</a>
-</body>
-</html>
+{% endblock %}

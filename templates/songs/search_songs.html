@@ -1,0 +1,58 @@
+
+{% extends 'base.html' %}
+{% block title %}{% endblock %}
+{% block content %}
+<h1>Пошук Пісень</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="flashes">
+      {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="POST" action="{{ url_for('search_songs') }}">
+    <label for="name">Назва Пісні:</label>
+    <input type="text" id="name" name="name" placeholder="Введіть назву пісні">
+
+    <label for="author">Автор:</label>
+    <input type="text" id="author" name="author" placeholder="Введіть автора">
+
+    <label for="genre">Жанр:</label>
+    <input type="text" id="genre" name="genre" placeholder="Введіть жанр">
+
+    <button type="submit">Пошук</button>
+</form>
+
+{% if results %}
+    <table>
+        <thead>
+            <tr>
+                <th>Назва</th>
+                <th>Автор</th>
+                <th>Жанр</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for song in results %}
+            <tr>
+                <td>{{ song.name }}</td>
+                <td>{{ song.author }}</td>
+                <td>{{ song.genre }}</td>
+                <td>
+                    <a href="{{ url_for('view_song', song_id=song._id) }}">Переглянути</a>
+                    {% if session['role'] in ['owner', 'administrator', 'operator'] %}
+                        | <a href="{{ url_for('edit_song', song_id=song._id) }}">Редагувати</a>
+                        | <a href="{{ url_for('delete_song', song_id=song._id) }}" onclick="return confirm('Ви впевнені, що хочете видалити цю пісню?')">Видалити</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}

@@ -2,15 +2,18 @@
 {% block title %}Performances{% endblock %}
 {% block content %}
     <h1>Performances</h1>
-    <a href="{{ url_for('add_performance') }}" class="btn btn-success mb-3">Add Performance</a>
+    {% if session['role'] in ['owner', 'administrator'] %}
+        <a href="{{ url_for('add_performance') }}" class="btn btn-success mb-3">Add Performance</a>
+    {% endif %}
+    <a href="{{ url_for('search_performances') }}" class="btn mb-3">Search Performances</a>
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th>Contestant</th>
-            <th>Song</th>
-            <th>Broadcast</th>
-            <th>Order</th>
-            <th>Actions</th>
+            <th>Конкурсант</th>
+            <th>Пісня</th>
+            <th>Ефір</th>
+            <th>Черга</th>
+            <th>Дії</th>
         </tr>
         </thead>
         <tbody>
