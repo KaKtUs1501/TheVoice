@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Artists and Songs by Broadcast{% endblock %}
+{% block content %}
+    <h1>Керування Користувачами</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Ім'я користувача</th>
+                <th>Email</th>
+                <th>Роль</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    <a href="{{ url_for('edit_user', user_id=user._id) }}">Редагувати</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('dashboard') }}">Повернутися до Панелі Управління</a>
+{% endblock %}
