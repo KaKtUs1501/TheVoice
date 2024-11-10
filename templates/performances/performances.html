@@ -1,58 +1,52 @@
 {% extends 'base.html' %}
 {% block title %}Performances{% endblock %}
 {% block content %}
-    <h1>Performances</h1>
-    {% if session['role'] in ['owner', 'administrator'] %}
+<h1>Performances</h1>
+{% if session['role'] in ['owner', 'administrator'] %}
         <a href="{{ url_for('add_performance') }}" class="btn btn-success mb-3">Add Performance</a>
     {% endif %}
-    <a href="{{ url_for('search_performances') }}" class="btn mb-3">Search Performances</a>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>Конкурсант</th>
-            <th>Пісня</th>
-            <th>Ефір</th>
-            <th>Черга</th>
-            <th>Дії</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for performance in performances %}
-            <tr>
-                <td>
-                    {% set contestant = contestants | selectattr('_id', 'equalto', performance.contestant_id) | first %}{{ contestant.name if contestant else 'Unknown Contestant' }} {{ contestant.surname if contestant else 'Unknown Contestant' }}</td>
-                <td>
-                    {% set song = songs | selectattr('_id', 'equalto', performance.song_id) | first %}{{ song.name if song else 'Unknown Song' }}</td>
-                <td>
-                    {% set broadcast = broadcasts | selectattr('_id', 'equalto', performance.broadcast_id) | first %}{{ broadcast.name if broadcast else 'Unknown Broadcast' }}</td>
-                <td>{{ performance.order }}</td>
-                <td>
-                    <a href="{{ url_for('edit_performance', performance_id=performance._id) }}"
-                       class="btn btn-warning btn-sm">Edit</a>
-                    <a href="{{ url_for('delete_performance', performance_id=performance._id) }}"
-                       class="btn btn-danger btn-sm">Delete</a>
-                   <a href="{{ url_for('vote_performance', performance_id=performance._id) }}" class="btn btn-primary btn-sm">Vote</a>
-             </td>
-            </tr>
+
+<form method="POST">
+    <label for="broadcast">Select Broadcast:</label>
+    <select name="broadcast_id" id="broadcast">
+        <option value="" disabled selected>Select a Broadcast</option>
+        {% for broadcast in broadcasts %}
+        <option value="{{ broadcast._id }}" {% if selected_broadcast_id and broadcast._id == selected_broadcast_id %}selected{% endif %}>
+            {{ broadcast.name }}
+        </option>
         {% endfor %}
-        </tbody>
-    </table>
-    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
-{% endblock %}
+    </select>
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
 
-{% block scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const voteTypeCheckbox = document.getElementById('voteTypeCheckbox');
-        const voteTypeLabel = document.getElementById('voteTypeLabel');
-
-        voteTypeCheckbox.addEventListener('change', function() {
-            if (voteTypeCheckbox.checked) {
-                voteTypeLabel.textContent = 'SMS Vote';
-            } else {
-                voteTypeLabel.textContent = 'Phone Vote';
-            }
-        });
-    });
-</script>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Contestant</th>
+            <th>Song</th>
+            <th>Order</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for performance in performances %}
+        <tr>
+            <td>
+                {% set contestant = contestants | selectattr('_id', 'equalto', performance.contestant_id) | first %}
+                {{ contestant.name if contestant else 'Unknown Contestant' }} {{ contestant.surname if contestant else '' }}
+            </td>
+            <td>
+                {% set song = songs | selectattr('_id', 'equalto', performance.song_id) | first %}
+                {{ song.name if song else 'Unknown Song' }}
+            </td>
+            <td>{{ performance.order }}</td>
+            <td>
+                <a href="{{ url_for('edit_performance', performance_id=performance._id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{{ url_for('delete_performance', performance_id=performance._id) }}" class="btn btn-danger btn-sm">Delete</a>
+                <a href="{{ url_for('vote_performance', performance_id=performance._id) }}" class="btn btn-primary btn-sm">Vote</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

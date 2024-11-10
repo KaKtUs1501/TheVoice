@@ -23,6 +23,7 @@ broadcast_collection = db['live_broadcast']
 phone_voting_collection = db['phone_voting']
 sms_voting_collection = db['SMS_voting']
 results_collection = db['results']
+jury_voting_collection = db['jury_voting']
 
 song_db = SongDatabase(db_uri="mongodb://localhost:27017/", db_name="voice")
 
@@ -563,30 +564,42 @@ def edit_song(song_id):
     return render_template('songs/song_edit.html', song=song)
 
 
-# Маршрути для Виступів
 @app.route('/performances', methods=['GET', 'POST'])
 @login_required
 @roles_required('owner', 'administrator', 'operator', 'user')
 def performances():
-    performances = list(performance_collection.find())
+    # Отримуємо всі унікальні ефіри для вибору
+    broadcasts = list(broadcast_collection.find())
+    selected_broadcast_id = None
+    performances = []
 
-    # Збираємо всі унікальні contestant_id, song_id і broadcast_id
+    # Якщо обрано ефір
+    if request.method == 'POST':
+        selected_broadcast_id = request.form.get('broadcast_id')
+        if selected_broadcast_id:
+            # Отримуємо виступи, пов'язані лише з обраним ефіром
+            performances = list(performance_collection.find({"broadcast_id": ObjectId(selected_broadcast_id)}).sort("order", 1))
+    else:
+        # Якщо ефір не обрано, показуємо всі виступи
+        performances = list(performance_collection.find())
+
+    # Збираємо унікальні contestant_id та song_id для фільтрованих виступів
     contestant_ids = {performance['contestant_id'] for performance in performances}
     song_ids = {performance['song_id'] for performance in performances}
-    broadcast_ids = {performance['broadcast_id'] for performance in performances}
 
-    # Фільтруємо конкурсантів, пісні та трансляції
+    # Фільтруємо конкурсантів і пісні
     contestants = list(contestant_collection.find({"_id": {"$in": list(contestant_ids)}}))
     songs = list(song_collection.find({"_id": {"$in": list(song_ids)}}))
-    broadcasts = list(broadcast_collection.find({"_id": {"$in": list(broadcast_ids)}}))
 
     return render_template(
         'performances/performances.html',
         performances=performances,
         contestants=contestants,
         songs=songs,
-        broadcasts=broadcasts
+        broadcasts=broadcasts,
+        selected_broadcast_id=selected_broadcast_id
     )
+
 
 
 @app.route('/performance/create', methods=['GET', 'POST'])
@@ -943,18 +956,28 @@ def submit_votes():
 
 @app.route('/results', methods=['GET'])
 @login_required
-@roles_required('owner', 'administrator', 'operator', 'user')  # <-- New
+@roles_required('owner', 'administrator', 'operator', 'user')
 def results():
     results = []
     for contestant in contestant_collection.find():
+        # Підрахунок голосів від телефонів
         phone_votes_count = phone_voting_collection.count_documents({"contestant_id": contestant["_id"]})
 
+        # Підрахунок голосів від SMS
         sms_votes_count = sms_voting_collection.count_documents({"contestant_id": contestant["_id"]})
 
-        total_votes = phone_votes_count + sms_votes_count
+        # Підрахунок балів від журі
+        jury_scores = jury_voting_collection.find({"contestant_id": contestant["_id"]})
+        total_jury_score = sum([score["score"] for score in jury_scores])  # Сума балів від журі
+
+        # Загальна кількість голосів
+        total_votes = phone_votes_count + sms_votes_count + total_jury_score
 
         results.append({
             "contestant": contestant,
+            "phone_votes": phone_votes_count,
+            "sms_votes": sms_votes_count,
+            "jury_score": total_jury_score,
             "total_votes": total_votes
         })
 
@@ -963,34 +986,53 @@ def results():
 
 @app.route('/performance/<performance_id>/vote', methods=['GET', 'POST'])
 @login_required
-@roles_required('owner', 'administrator', 'operator', 'user')  # <-- New
 def vote_performance(performance_id):
-    # Find performance and its data
+    # Знаходимо дані перформансу, журі та пов'язаного бродкасту
     performance = performance_collection.find_one({"_id": ObjectId(performance_id)})
     broadcast_id = performance["broadcast_id"] if performance else None
     contestant_id = performance["contestant_id"] if performance else None
+    juries = list(jury_collection.find())
 
-    if request.method == 'POST' and broadcast_id and contestant_id:
-        phone_number = request.form['phone_number']
-        vote_type = request.form['vote_type']
+    if request.method == 'POST':
+        phone_number = request.form.get('phone_number')
+        vote_type = request.form.get('vote_type')
 
-        # Form vote data
-        vote_data = {
-            "performance_id": ObjectId(performance_id),
-            "broadcast_id": broadcast_id,
-            "contestant_id": contestant_id,
-            "phone_number": phone_number
-        }
+        # Якщо голос від глядача (sms або phone)
+        if vote_type in ['sms', 'phone'] and phone_number:
+            vote_data = {
+                "performance_id": ObjectId(performance_id),
+                "broadcast_id": broadcast_id,
+                "contestant_id": contestant_id,
+                "phone_number": phone_number
+            }
+            if vote_type == 'sms':
+                sms_voting_collection.insert_one(vote_data)
+            else:
+                phone_voting_collection.insert_one(vote_data)
 
-        if vote_type == 'sms':
-            sms_voting_collection.insert_one(vote_data)
-        else:
-            phone_voting_collection.insert_one(vote_data)
+            flash('Viewer vote recorded successfully!', 'success')
 
-        flash('Vote recorded successfully!', 'success')
+        # Якщо голос від журі
+        elif vote_type == 'jury':
+            jury_id = request.form.get('jury_id')
+            score = int(request.form.get('score', 0))
+
+            if jury_id and 1 <= score <= 10:
+                jury_vote_data = {
+                    "performance_id": ObjectId(performance_id),
+                    "broadcast_id": broadcast_id,
+                    "contestant_id": contestant_id,
+                    "jury_id": ObjectId(jury_id),
+                    "score": score
+                }
+                jury_voting_collection.insert_one(jury_vote_data)
+                flash('Jury vote recorded successfully!', 'success')
+            else:
+                flash('Please select a valid jury and score between 1 and 10.', 'danger')
+
         return redirect(url_for('performances'))
 
-    return render_template('voting/vote.html', performance=performance)
+    return render_template('voting/vote.html', performance=performance, juries=juries)
 
 
 # User Management Routes
@@ -1041,15 +1083,37 @@ def edit_user(user_id):
 
 @app.route('/performers_by_song_and_city', methods=['GET', 'POST'])
 @login_required
-@roles_required('owner', 'administrator', 'operator', 'user')  # <-- New
 def performers_by_song_and_city():
     songs = list(song_collection.find())
-    cities = contestant_collection.distinct('city')
+    cities = contestant_collection.distinct("city")
     performers = []
+
     if request.method == 'POST':
-        song = request.form.get('song')
+        song_id = request.form.get('song')
         city = request.form.get('city')
-        performers = list(contestant_collection.find({"city": city, "song": song}))
+
+        # Фільтр для запиту
+        query = {}
+        if city:
+            query["city"] = city
+        if song_id:
+            performances = performance_collection.find({"song_id": ObjectId(song_id)})
+            performer_ids = {performance["contestant_id"] for performance in performances}
+            query["_id"] = {"$in": list(performer_ids)}
+
+        # Отримуємо виконавців на основі фільтра
+        performers = list(contestant_collection.find(query))
+
+        # Додаємо інформацію про пісню для кожного виконавця
+        for performer in performers:
+            performer_performance = performance_collection.find_one(
+                {"contestant_id": performer["_id"], "song_id": ObjectId(song_id)}) if song_id else None
+            if performer_performance:
+                song = song_collection.find_one({"_id": ObjectId(song_id)})
+                performer["song"] = song["name"] if song else "Unknown Song"
+            else:
+                performer["song"] = "Unknown Song"
+
     return render_template('queries/performers_by_song_and_city.html', songs=songs, cities=cities,
                            performers=performers)
 
@@ -1153,19 +1217,45 @@ def max_sms_votes():
 
 @app.route('/winner_of_contest', methods=['GET', 'POST'])
 @login_required
-@roles_required('owner', 'administrator', 'operator', 'user')  # <-- New
+@roles_required('owner', 'administrator', 'operator', 'user')
 def winner_of_contest():
-    max_votes = 0
-    winner = None
-    contestants = list(contestant_collection.find())
-    if request.method == 'POST':
-        for contestant in contestants:
-            total_votes = phone_voting_collection.count_documents({"contestant_id": contestant["_id"]}) + \
-                          sms_voting_collection.count_documents({"contestant_id": contestant["_id"]})
-            if total_votes > max_votes:
-                max_votes = total_votes
-                winner = contestant
-    return render_template('queries/winner_of_contest.html', winner=winner, total_votes=max_votes)
+    contestants_results = []
+
+    # Підраховуємо голоси та бали для кожного конкурсанта
+    for contestant in contestant_collection.find():
+        # Підрахунок телефонних та SMS голосів
+        phone_votes_count = phone_voting_collection.count_documents({"contestant_id": contestant["_id"]})
+        sms_votes_count = sms_voting_collection.count_documents({"contestant_id": contestant["_id"]})
+
+        # Підрахунок балів від журі
+        jury_votes = jury_voting_collection.find({"contestant_id": contestant["_id"]})
+        total_jury_score = sum([vote["score"] for vote in jury_votes])
+
+        # Загальна кількість голосів та балів
+        total_votes = phone_votes_count + sms_votes_count + total_jury_score
+
+        contestants_results.append({
+            "contestant": contestant,
+            "phone_votes": phone_votes_count,
+            "sms_votes": sms_votes_count,
+            "jury_score": total_jury_score,
+            "total_votes": total_votes
+        })
+
+    # Сортуємо конкурсантів за загальною кількістю голосів у порядку спадання
+    contestants_results.sort(key=lambda x: x["total_votes"], reverse=True)
+
+    # Визначаємо переможця та призерів
+    winner = contestants_results[0] if contestants_results else None
+    second_place = contestants_results[1] if len(contestants_results) > 1 else None
+    third_place = contestants_results[2] if len(contestants_results) > 2 else None
+
+    return render_template(
+        'queries/winner_of_contest.html',
+        winner=winner,
+        second_place=second_place,
+        third_place=third_place
+    )
 
 
 @app.route('/sms_messages_per_broadcast', methods=['GET', 'POST'])

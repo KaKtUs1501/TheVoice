@@ -1,20 +1,45 @@
 {% extends 'base.html' %}
 {% block title %}Vote for Performance{% endblock %}
 {% block content %}
-<h1>Vote for {{ performance.contestant_name }}'s Performance</h1>
-<form method="POST" action="{{ url_for('vote_performance', performance_id=performance._id) }}">
-    <div class="mb-3">
-        <label for="phone_number" class="form-label">Phone Number</label>
-        <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+<h1>Vote for Performance</h1>
+
+<form method="POST">
+    <!-- Вибір типу голосування -->
+    <label for="vote_type">Vote Type:</label>
+    <select id="vote_type" name="vote_type">
+        <option value="sms">SMS Vote</option>
+        <option value="phone">Phone Vote</option>
+        <option value="jury">Jury Vote</option>
+    </select>
+
+    <!-- Для глядацьких голосів -->
+    <div id="viewer-vote-section">
+        <label for="phone_number">Phone Number:</label>
+        <input type="text" id="phone_number" name="phone_number" placeholder="Enter phone number">
     </div>
-    <div class="mb-3">
-        <label for="voteTypeSelect" class="form-label">Select Vote Type</label>
-        <select class="form-control" id="voteTypeSelect" name="vote_type">
-            <option value="phone">Phone Vote</option>
-            <option value="sms">SMS Vote</option>
+
+    <!-- Для голосів журі -->
+    <div id="jury-vote-section" style="display: none;">
+        <label for="jury_id">Select Jury:</label>
+        <select id="jury_id" name="jury_id">
+            <option selected="selected" disabled value="">Select Jury Member</option>
+            {% for jury in juries %}
+            <option value="{{ jury._id }}">{{ jury.name }} {{ jury.surname }}</option>
+            {% endfor %}
         </select>
+
+        <label for="score">Score (1-10):</label>
+        <input type="number" id="score" name="score" min="1" max="10" placeholder="Enter score (1-10)">
     </div>
-    <button type="submit" class="btn btn-primary">Submit Vote</button>
-    <a href="{{ url_for('performances') }}" class="btn btn-secondary">Cancel</a>
+
+    <button type="submit">Submit Vote</button>
 </form>
+
+<script>
+document.getElementById("vote_type").addEventListener("change", function() {
+    var voteType = this.value;
+    document.getElementById("viewer-vote-section").style.display = voteType === "jury" ? "none" : "block";
+    document.getElementById("jury-vote-section").style.display = voteType === "jury" ? "block" : "none";
+});
+</script>
 {% endblock %}
