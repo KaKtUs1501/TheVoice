@@ -1,102 +1,36 @@
 {% extends 'base.html' %}
 {% block title %}Dashboard Overview{% endblock %}
 {% block content %}
-<h1>Dashboard Overview</h1>
-<div class="container">
-    <div class="mb-4">
-        <label for="querySelect" class="form-label">Select Query</label>
-        <select class="form-control" id="querySelect">
-            <option value="" disabled selected>Select a query to execute</option>
-            <option value="performersBySongAndCity">Performers by Song and City</option>
-            <option value="artistsAndSongsByBroadcast">Artists and Songs by Broadcast</option>
-            <option value="contestantPerformedSongs">Contestant's Performed Songs</option>
-            <option value="contestantUnder200Votes">Contestant with Less than 200 Votes</option>
-            <option value="votesInFirstBroadcast">Votes in First Broadcast</option>
-            <option value="broadcastSchedule">Full Broadcast Schedule</option>
-            <option value="maxSmsVotes">Contestant with Maximum SMS Votes</option>
-            <option value="winnerOfContest">Winner of the Contest</option>
-            <option value="smsMessagesPerBroadcast">SMS Messages per Broadcast</option>
-            <option value="callsFromNumber">Calls from Specific Number in a Broadcast</option>
-        </select>
-    </div>
-    <div id="inputFields" class="mb-4" style="display: none;">
+    <h1 class="center"> TheVoice 🎤</h1>
 
-     </div>
-    <button id="executeQueryBtn" class="btn btn-primary">Execute Query</button>
-    <div id="queryResult" class="mt-4">
+        <div class="section">
+            <h2>📅 Майбутні прямі ефіри</h2>
+            <p>Залишайтесь в курсі розкладу прямих трансляцій. Не пропустіть жодного виступу, коли конкурсанти демонструють свої найкращі здібності, щоб завоювати симпатії аудиторії та журі.</p>
+        </div>
 
-    </div>
-</div>
-<a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
-{% endblock %}
+        <div class="section">
+            <h2>👤 Огляд конкурсантів</h2>
+            <p>Отримайте інформацію про талановитих учасників, що змагаються за перемогу. Слідкуйте за їх прогресом та переглядайте детальні профілі з історією виступів та статистикою голосувань.</p>
+        </div>
 
-{% block scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const querySelect = document.getElementById('querySelect');
-        const inputFields = document.getElementById('inputFields');
-        const executeQueryBtn = document.getElementById('executeQueryBtn');
-        const queryResult = document.getElementById('queryResult');
+        <div class="section">
+            <h2>🎶 Вибір пісень</h2>
+            <p>Перегляньте вибір пісень, які готують конкурсанти для виступів. Відкрийте для себе різноманітність жанрів та варіантів, що демонструють вокальні здібності та артистизм конкурсантів.</p>
+       </div>
 
-        querySelect.addEventListener('change', function() {
-            inputFields.innerHTML = '';
-            queryResult.innerHTML = '';
-            inputFields.style.display = 'none';
+        <div class="section">
+            <h2>🌟 Журі</h2>
+            <p>Познайомтесь з експертами, що ведуть конкурс! Дізнайтесь більше про членів журі, їхні відгуки та вплив на прогрес конкурсантів.</p>
+        </div>
 
-            if (querySelect.value === 'performersBySongAndCity') {
-                inputFields.innerHTML = `
-                    <label for="song" class="form-label">Song</label>
-                    <input type="text" class="form-control mb-3" id="song" name="song" required>
-                    <label for="city" class="form-label">City</label>
-                    <input type="text" class="form-control" id="city" name="city" required>
-                `;
-                inputFields.style.display = 'block';
-            } else if (querySelect.value === 'callsFromNumber') {
-                inputFields.innerHTML = `
-                    <label for="phoneNumber" class="form-label">Phone Number</label>
-                    <input type="text" class="form-control mb-3" id="phoneNumber" name="phoneNumber" required>
-                    <label for="broadcast" class="form-label">Broadcast ID</label>
-                    <input type="text" class="form-control" id="broadcast" name="broadcast" required>
-                `;
-                inputFields.style.display = 'block';
-            }
-            // Add more input fields as needed for other queries
-        });
+        <div class="section">
+            <h2>📈 Статистика голосувань</h2>
+            <p>Аналізуйте дані голосувань у реальному часі на кожному ефірі. Слідкуйте за популярністю конкурсантів та динамікою їх виступів.</p>
+         </div>
 
-        executeQueryBtn.addEventListener('click', function() {
-            const selectedQuery = querySelect.value;
-            let requestData = {};
+        <div class="section">
+            <h2>🏆 Фінальний ефір та переможці</h2>
+            <p>Приєднуйтесь до великого фіналу, де будуть визначені переможці! Слідкуйте за результатами голосування в режимі реального часу та святкуйте разом з переможцями.</p>
+         </div>
 
-            if (selectedQuery === 'performersBySongAndCity') {
-                requestData = {
-                    song: document.getElementById('song').value,
-                    city: document.getElementById('city').value
-                };
-            } else if (selectedQuery === 'callsFromNumber') {
-                requestData = {
-                    phoneNumber: document.getElementById('phoneNumber').value,
-                    broadcast: document.getElementById('broadcast').value
-                };
-            }
-
-            // Perform AJAX request to execute the query (pseudo code, implement in backend)
-            fetch(`/execute_query/${selectedQuery}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Display the query result
-                queryResult.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-            })
-            .catch(error => {
-                console.error('Error executing query:', error);
-                queryResult.innerHTML = `<div class="alert alert-danger">An error occurred while executing the query.</div>`;
-            });
-        });
-    });
-</script>
 {% endblock %}

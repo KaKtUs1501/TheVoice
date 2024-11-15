@@ -1,19 +1,79 @@
 {% extends 'base.html' %}
 {% block title %}Calls from Number{% endblock %}
+
 {% block content %}
-<h1>Calls from Number</h1>
-<form action="{{ url_for('calls_from_number') }}" method="POST">
-    <label for="phoneNumber">Phone Number:</label>
-    <input type="text" id="phoneNumber" name="phoneNumber" required>
-    <label for="broadcast">Broadcast:</label>
-    <select id="broadcast" name="broadcast">
-        {% for broadcast in broadcasts %}
-        <option value="{{ broadcast._id }}">{{ broadcast.name }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit">Search</button>
-</form>
-{% if total_calls is not none %}
-<p>Всього дзвінків: {{ total_calls }}</p>
-{% endif %}
+<style>
+    .calls-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .calls-container h1 {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .calls-container label {
+        font-weight: 500;
+        color: #555;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .calls-container input,
+    .calls-container select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+    .calls-container button {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        color: white;
+        background-color: #4e73df;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .calls-container button:hover {
+        background-color: #2e59d9;
+    }
+    .results {
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="calls-container">
+    <h1>Calls from Number</h1>
+    <form action="{{ url_for('calls_from_number') }}" method="POST">
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Enter phone number" required>
+
+        <label for="broadcast">Broadcast:</label>
+        <select id="broadcast" name="broadcast">
+            {% for broadcast in broadcasts %}
+            <option value="{{ broadcast._id }}">{{ broadcast.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Search</button>
+    </form>
+
+    {% if total_calls is not none %}
+    <p class="results">Всього дзвінків: {{ total_calls }}</p>
+    {% endif %}
+</div>
 {% endblock %}

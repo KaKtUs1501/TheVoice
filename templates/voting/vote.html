@@ -1,39 +1,89 @@
 {% extends 'base.html' %}
 {% block title %}Vote for Performance{% endblock %}
+
 {% block content %}
-<h1>Vote for Performance</h1>
+<style>
+    .vote-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .vote-container h1 {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .vote-container label {
+        display: block;
+        font-weight: 500;
+        color: #555;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .vote-container input, .vote-container select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+    .vote-container button {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        color: white;
+        background-color: #4e73df;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .vote-container button:hover {
+        background-color: #2e59d9;
+    }
+</style>
 
-<form method="POST">
-    <!-- Вибір типу голосування -->
-    <label for="vote_type">Vote Type:</label>
-    <select id="vote_type" name="vote_type">
-        <option value="sms">SMS Vote</option>
-        <option value="phone">Phone Vote</option>
-        <option value="jury">Jury Vote</option>
-    </select>
+<div class="vote-container">
+    <h1>Vote for Performance</h1>
 
-    <!-- Для глядацьких голосів -->
-    <div id="viewer-vote-section">
-        <label for="phone_number">Phone Number:</label>
-        <input type="text" id="phone_number" name="phone_number" placeholder="Enter phone number">
-    </div>
-
-    <!-- Для голосів журі -->
-    <div id="jury-vote-section" style="display: none;">
-        <label for="jury_id">Select Jury:</label>
-        <select id="jury_id" name="jury_id">
-            <option selected="selected" disabled value="">Select Jury Member</option>
-            {% for jury in juries %}
-            <option value="{{ jury._id }}">{{ jury.name }} {{ jury.surname }}</option>
-            {% endfor %}
+    <form method="POST">
+        <!-- Voting Type Selection -->
+        <label for="vote_type">Vote Type:</label>
+        <select id="vote_type" name="vote_type">
+            <option value="sms">SMS Vote</option>
+            <option value="phone">Phone Vote</option>
+            <option value="jury">Jury Vote</option>
         </select>
 
-        <label for="score">Score (1-10):</label>
-        <input type="number" id="score" name="score" min="1" max="10" placeholder="Enter score (1-10)">
-    </div>
+        <!-- Viewer Votes Section -->
+        <div id="viewer-vote-section">
+            <label for="phone_number">Phone Number:</label>
+            <input type="text" id="phone_number" name="phone_number" placeholder="Enter phone number">
+        </div>
 
-    <button type="submit">Submit Vote</button>
-</form>
+        <!-- Jury Votes Section -->
+        <div id="jury-vote-section" style="display: none;">
+            <label for="jury_id">Select Jury:</label>
+            <select id="jury_id" name="jury_id">
+                <option selected="selected" disabled value="">Select Jury Member</option>
+                {% for jury in juries %}
+                <option value="{{ jury._id }}">{{ jury.name }} {{ jury.surname }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="score">Score (1-10):</label>
+            <input type="number" id="score" name="score" min="1" max="10" placeholder="Enter score (1-10)">
+        </div>
+
+        <button type="submit">Submit Vote</button>
+    </form>
+</div>
 
 <script>
 document.getElementById("vote_type").addEventListener("change", function() {

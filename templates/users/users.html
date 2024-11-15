@@ -1,37 +1,109 @@
 {% extends 'base.html' %}
 {% block title %}Artists and Songs by Broadcast{% endblock %}
 {% block content %}
+<style>
+    /* Custom styles for dashboard aesthetics */
+    h1 {
+        font-size: 2.5rem;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+    .table th {
+        background-color: #f8f9fa;
+        color: #333;
+        font-weight: 600;
+    }
+    .table td, .table th {
+        vertical-align: middle;
+    }
+    .table-hover tbody tr:hover {
+        background-color: #f1f3f5;
+    }
+    .btn {
+        transition: all 0.2s ease;
+    }
+    .btn-primary {
+        background-color: #4e73df;
+        border: none;
+    }
+    .btn-primary:hover {
+        background-color: #2e59d9;
+    }
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+    /* Neutral color for action buttons */
+    .btn-action {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+    }
+    .btn-action:hover {
+        background-color: #5a6268;
+    }
+    /* Flash messages styling */
+    .flashes {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 20px;
+    }
+    .flashes li {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        color: white;
+    }
+    .flashes .success {
+        background-color: #28a745;
+    }
+    .flashes .error {
+        background-color: #dc3545;
+    }
+</style>
+
     <h1>Керування Користувачами</h1>
+
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul class="flashes">
-          {% for category, message in messages %}
-            <li class="{{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     {% endwith %}
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Ім'я користувача</th>
-                <th>Email</th>
-                <th>Роль</th>
-                <th>Дії</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
-                <td>
-                    <a href="{{ url_for('edit_user', user_id=user._id) }}">Редагувати</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{{ url_for('dashboard') }}">Повернутися до Панелі Управління</a>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Ім'я користувача</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Роль</th>
+                    <th scope="col" class="text-center">Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td class="text-center">
+                        <a href="{{ url_for('edit_user', user_id=user._id) }}" class="btn btn-action btn-sm" title="Редагувати">
+                            <i class="fas fa-edit"></i> Редагувати
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-start mt-3">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Повернутися до Панелі Управління</a>
+    </div>
 {% endblock %}

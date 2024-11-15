@@ -1,26 +1,120 @@
 {% extends 'base.html' %}
-{% block title %}{% endblock %}
+{% block title %}Edit Role{% endblock %}
+
 {% block content %}
-    <h1>Редагування Ролі для {{ user.username }}</h1>
+<style>
+    /* Unique styles for Edit Role page */
+    .unique-edit-role-header {
+        font-size: 2.2rem;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+    .unique-flashes {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 20px;
+    }
+    .unique-flashes li {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        color: white;
+        text-align: center;
+    }
+    .unique-flashes .success {
+        background-color: #28a745;
+    }
+    .unique-flashes .error {
+        background-color: #dc3545;
+    }
+    .unique-edit-form {
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    .unique-form-group {
+        margin-bottom: 15px;
+    }
+    .unique-form-group label {
+        font-weight: 500;
+        color: #555;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .unique-form-control {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        color: #333;
+        background-color: #f9f9f9;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+    }
+    .unique-form-control:focus {
+        border-color: #4e73df;
+        outline: none;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+    .unique-btn-primary {
+        background-color: #4e73df;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        transition: background-color 0.2s ease;
+        margin-top: 10px;
+    }
+    .unique-btn-primary:hover {
+        background-color: #2e59d9;
+    }
+    .unique-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .unique-btn-secondary:hover {
+        background-color: #5a6268;
+    }
+</style>
+
+<div class="unique-edit-form mt-4">
+    <h1 class="unique-edit-role-header">Редагування Ролі для {{ user.username }}</h1>
+
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <ul class="flashes">
+        <ul class="unique-flashes">
           {% for category, message in messages %}
             <li class="{{ category }}">{{ message }}</li>
           {% endfor %}
         </ul>
       {% endif %}
     {% endwith %}
+
     <form method="POST">
-        <label for="role">Роль:</label>
-        <select name="role" id="role" required>
-            {% if session['role'] in ['owner'] %}
-                <option value="administrator">administrator</option>
-            {% endif %}
+        <div class="unique-form-group">
+            <label for="role">Роль:</label>
+            <select name="role" id="role" class="unique-form-control" required>
+                {% if session['role'] in ['owner'] %}
+                    <option value="administrator">administrator</option>
+                {% endif %}
                 <option value="operator">operator</option>
                 <option value="user">user</option>
-        </select>
-        <button type="submit">Оновити Роль</button>
+            </select>
+        </div>
+
+        <button type="submit" class="unique-btn-primary">Оновити Роль</button>
     </form>
-    <a href="{{ url_for('manage_users') }}">Повернутися до Списку Користувачів</a>
+
+    <a href="{{ url_for('manage_users') }}" class="unique-btn-secondary">Повернутися до Списку Користувачів</a>
+</div>
 {% endblock %}

@@ -1,7 +1,102 @@
-
 {% extends 'base.html' %}
-{% block title %}{% endblock %}
+{% block title %}Пошук Виступів{% endblock %}
+
 {% block content %}
+<style>
+    .search-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .search-container h1 {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .flashes {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .flashes li {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        color: white;
+        text-align: center;
+    }
+    .flashes .success {
+        background-color: #28a745;
+    }
+    .flashes .error {
+        background-color: #dc3545;
+    }
+    .search-container label {
+        font-weight: 500;
+        color: #555;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .search-container input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+    .search-container button {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        color: white;
+        background-color: #4e73df;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .search-container button:hover {
+        background-color: #2e59d9;
+    }
+    .result-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+    .result-table th {
+        background-color: #f8f9fc;
+        font-weight: bold;
+        color: #333;
+    }
+    .result-table td {
+        background-color: #ffffff;
+    }
+    .action-links a {
+        color: #007bff;
+        margin: 0 5px;
+        font-size: 1.2rem;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    .action-links a:hover {
+        color: #0056b3;
+    }
+</style>
+
+<div class="search-container">
     <h1>Пошук Виступів</h1>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -23,50 +118,58 @@
 
         <label for="broadcast_name">Назва Трансляції:</label>
         <input type="text" id="broadcast_name" name="broadcast_name" placeholder="Введіть назву трансляції">
+        
         <button type="submit">Пошук</button>
     </form>
+</div>
 
-    {% if results %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Конкурсант</th>
-                    <th>Пісня</th>
-                    <th>Трансляція</th>
-                    <th>Порядок</th>
-                    <th>Телефонні Голоси</th>
-                    <th>SMS Голоси</th>
-                    <th>Дії</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for performance in results %}
-                <tr>
-                    <td>
-                        {% set contestant = contestant_collection.find_one({'_id': performance.contestant_id}) %}
-                        {{ contestant.name }} {{ contestant.surname }}
-                    </td>
-                    <td>
-                        {% set song = song_collection.find_one({'_id': performance.song_id}) %}
-                        {{ song.name }}
-                    </td>
-                    <td>
-                        {% set broadcast = broadcast_collection.find_one({'_id': performance.broadcast_id}) %}
-                        {{ broadcast.name }}
-                    </td>
-                    <td>{{ performance.order }}</td>
-                    <td>{{ performance.phone_votes }}</td>
-                    <td>{{ performance.sms_votes }}</td>
-                    <td>
-                        <a href="{{ url_for('view_performance', performance_id=performance._id) }}">Переглянути</a>
-                        {% if session['role'] in ['owner', 'administrator', 'operator'] %}
-                            | <a href="{{ url_for('edit_performance', performance_id=performance._id) }}">Редагувати</a>
-                            | <a href="{{ url_for('delete_performance', performance_id=performance._id) }}" onclick="return confirm('Ви впевнені, що хочете видалити цей виступ?')">Видалити</a>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+{% if results %}
+    <table class="result-table">
+        <thead>
+            <tr>
+                <th>Конкурсант</th>
+                <th>Пісня</th>
+                <th>Трансляція</th>
+                <th>Порядок</th>
+                <th>Телефонні Голоси</th>
+                <th>SMS Голоси</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for performance in results %}
+            <tr>
+                <td>
+                    {% set contestant = contestant_collection.find_one({'_id': performance.contestant_id}) %}
+                    {{ contestant.name }} {{ contestant.surname }}
+                </td>
+                <td>
+                    {% set song = song_collection.find_one({'_id': performance.song_id}) %}
+                    {{ song.name }}
+                </td>
+                <td>
+                    {% set broadcast = broadcast_collection.find_one({'_id': performance.broadcast_id}) %}
+                    {{ broadcast.name }}
+                </td>
+                <td>{{ performance.order }}</td>
+                <td>{{ performance.phone_votes }}</td>
+                <td>{{ performance.sms_votes }}</td>
+                <td class="action-links">
+                    <a href="{{ url_for('view_performance', performance_id=performance._id) }}" title="Переглянути">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    {% if session['role'] in ['owner', 'administrator', 'operator'] %}
+                        <a href="{{ url_for('edit_performance', performance_id=performance._id) }}" title="Редагувати">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ url_for('delete_performance', performance_id=performance._id) }}" onclick="return confirm('Ви впевнені, що хочете видалити цей виступ?');" title="Видалити">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
 {% endblock %}

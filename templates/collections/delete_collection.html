@@ -1,26 +1,100 @@
 {% extends 'base.html' %}
-{% block title %}Jury Members{% endblock %}
+{% block title %}Delete Collection{% endblock %}
+
 {% block content %}
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <ul class="flashes">
-      {% for category, message in messages %}
-        <li class="{{ category }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
+<style>
+    .delete-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .delete-container h1 {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .flashes {
+        list-style: none;
+        padding: 0;
+        text-align: center;
+        color: #d9534f;
+    }
+    .flashes li {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        background-color: #f8d7da;
+    }
+    .delete-container label {
+        display: block;
+        font-weight: 500;
+        color: #555;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .delete-container select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+    .delete-container button {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        color: white;
+        background-color: #d9534f;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .delete-container button:hover {
+        background-color: #c9302c;
+    }
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #4e73df;
+        text-decoration: none;
+    }
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
 
-<form method="POST" action="{{ url_for('delete_collection') }}">
-    <label for="collection_name">Виберіть Колекцію для Видалення:</label>
-    <select name="collection_name" id="collection_name" required>
-        <option value="" disabled selected>-- Оберіть Колекцію --</option>
-        {% for collection in collections %}
-            <option value="{{ collection }}">{{ collection }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit" onclick="return confirm('Ви впевнені, що хочете видалити цю колекцію? Ця дія є незворотною.')">Видалити Колекцію</button>
-</form>
+<div class="delete-container">
+    <h1>Delete Collection</h1>
 
-    <a href="{{ url_for('home') }}">Повернутися до Панелі Управління</a>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('delete_collection') }}">
+        <label for="collection_name">Виберіть Колекцію для Видалення:</label>
+        <select name="collection_name" id="collection_name" required>
+            <option value="" disabled selected>-- Оберіть Колекцію --</option>
+            {% for collection in collections %}
+                <option value="{{ collection }}">{{ collection }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" onclick="return confirm('Ви впевнені, що хочете видалити цю колекцію? Ця дія є незворотною.')">Видалити Колекцію</button>
+    </form>
+
+    <a href="{{ url_for('home') }}" class="back-link">Повернутися до Панелі Управління</a>
+</div>
 {% endblock %}

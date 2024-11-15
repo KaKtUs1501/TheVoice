@@ -1,24 +1,108 @@
 {% extends 'base.html' %}
 {% block title %}Add Song{% endblock %}
+
 {% block content %}
-<h1>Add Song</h1>
-{% if error_message %}
-    <div class="alert alert-danger">{{ error_message }}</div>
-{% endif %}
-<form method="POST" action="{{ url_for('add_song') }}">
-    <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" class="form-control" value="{{ request.form.get('name', '') }}" required>
-    </div>
-    <div class="form-group">
-        <label for="author">Author:</label>
-        <input type="text" id="author" name="author" class="form-control" value="{{ request.form.get('author', '') }}" required>
-    </div>
-    <div class="form-group">
-        <label for="genre">Genre:</label>
-        <input type="text" id="genre" name="genre" class="form-control" value="{{ request.form.get('genre', '') }}" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Add Song</button>
-</form>
-<a href="{{ url_for('songs') }}" class="btn btn-secondary mt-3">Back to Songs</a>
+<style>
+    /* Unique styles for Add Song page */
+    .unique-add-song-header {
+        font-size: 2.2rem;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+    .unique-add-form {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .unique-form-group {
+        margin-bottom: 15px;
+    }
+    .unique-form-group label {
+        font-weight: 500;
+        color: #555;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .unique-form-control {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        color: #333;
+        background-color: #f9f9f9;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+    }
+    .unique-form-control:focus {
+        border-color: #4e73df;
+        outline: none;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+    .unique-alert-danger {
+        padding: 10px;
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    .unique-btn-primary {
+        background-color: #4e73df;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        transition: background-color 0.2s ease;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .unique-btn-primary:hover {
+        background-color: #2e59d9;
+    }
+    .unique-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .unique-btn-secondary:hover {
+        background-color: #5a6268;
+    }
+</style>
+
+<div class="unique-add-form mt-4">
+    <h1 class="unique-add-song-header">Add Song</h1>
+
+    {% if error_message %}
+        <div class="unique-alert-danger">{{ error_message }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('add_song') }}">
+        <div class="unique-form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" class="unique-form-control" value="{{ request.form.get('name', '') }}" required>
+        </div>
+
+        <div class="unique-form-group">
+            <label for="author">Author:</label>
+            <input type="text" id="author" name="author" class="unique-form-control" value="{{ request.form.get('author', '') }}" required>
+        </div>
+
+        <div class="unique-form-group">
+            <label for="genre">Genre:</label>
+            <input type="text" id="genre" name="genre" class="unique-form-control" value="{{ request.form.get('genre', '') }}" required>
+        </div>
+
+        <button type="submit" class="unique-btn-primary">Add Song</button>
+    </form>
+    <a href="{{ url_for('songs') }}" class="unique-btn-secondary">Back to Songs</a>
+</div>
 {% endblock %}

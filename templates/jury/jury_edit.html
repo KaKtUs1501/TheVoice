@@ -3,36 +3,99 @@
 {% block title %}Edit Jury Member{% endblock %}
 
 {% block content %}
-    <h2>Edit Jury Member</h2>
+<style>
+    /* Unique styles for Edit Jury Member page */
+    .unique-edit-jury-header {
+        font-size: 2.2rem;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+    .unique-edit-form {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .unique-form-group {
+        margin-bottom: 15px;
+    }
+    .unique-form-group label {
+        font-weight: 500;
+        color: #555;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .unique-form-control {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        color: #333;
+        background-color: #f9f9f9;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+    }
+    .unique-form-control:focus {
+        border-color: #4e73df;
+        outline: none;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+    .unique-btn-primary {
+        background-color: #4e73df;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        transition: background-color 0.2s ease;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .unique-btn-primary:hover {
+        background-color: #2e59d9;
+    }
+</style>
+
+<div class="unique-edit-form mt-4">
+    <h2 class="unique-edit-jury-header">Edit Jury Member</h2>
+
     <form method="POST">
-        <div class="form-group">
+        <div class="unique-form-group">
             <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ jury.name }}" required>
+            <input type="text" class="unique-form-control" id="name" name="name" value="{{ jury.name }}" required>
         </div>
-        <div class="form-group">
+
+        <div class="unique-form-group">
             <label for="surname">Surname</label>
-            <input type="text" class="form-control" id="surname" name="surname" value="{{ jury.surname }}" required>
+            <input type="text" class="unique-form-control" id="surname" name="surname" value="{{ jury.surname }}" required>
         </div>
-        <div class="form-group">
+
+        <div class="unique-form-group">
             <label for="age">Age</label>
-            <input type="number" class="form-control" id="age" name="age" value="{{ jury.age }}" required>
+            <input type="number" class="unique-form-control" id="age" name="age" value="{{ jury.age }}" required>
         </div>
-        <div class="form-group">
+
+        <div class="unique-form-group">
             <label for="city">City</label>
-            <input type="text" class="form-control" id="city" name="city" value="{{ jury.city }}" required>
+            <input type="text" class="unique-form-control" id="city" name="city" value="{{ jury.city }}" required>
         </div>
-        <div class="form-group">
+
+        <div class="unique-form-group">
             <label for="birth">Birth Date</label>
-            <input type="date" class="form-control" id="birth" name="birth" value="{{ jury.birth }}" required>
+            <input type="date" class="unique-form-control" id="birth" name="birth" value="{{ jury.birth }}" required>
         </div>
-        <div class="form-group">
+
+        <div class="unique-form-group">
             <label for="phone_number">Phone Number</label>
-            <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ jury.phone_number }}" required>
+            <input type="text" class="unique-form-control" id="phone_number" name="phone_number" value="{{ jury.phone_number }}" required>
         </div>
-        <div class="form-group">
+
+        <div class="unique-form-group">
             <label for="position">Position</label>
-            <input type="text" class="form-control" id="position" name="position" value="{{ jury.position }}" required>
+            <input type="text" class="unique-form-control" id="position" name="position" value="{{ jury.position }}" required>
         </div>
-        <button type="submit" class="btn btn-primary">Save Changes</button>
+
+        <button type="submit" class="unique-btn-primary">Save Changes</button>
     </form>
+</div>
 {% endblock %}

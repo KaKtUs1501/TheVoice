@@ -1,46 +1,116 @@
 {% extends 'base.html' %}
 {% block title %}Voting{% endblock %}
+
 {% block content %}
-<h1>Voting</h1>
-<form method="POST" action="{{ url_for('select_broadcast_for_voting') }}">
-    <div class="form-group">
+<style>
+    .voting-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .voting-container h1 {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .voting-container label {
+        display: block;
+        font-weight: 500;
+        color: #555;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .voting-container select, .voting-container button {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+    .voting-container button {
+        background-color: #4e73df;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .voting-container button:hover {
+        background-color: #2e59d9;
+    }
+    .result-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+    .result-table th {
+        background-color: #f8f9fc;
+        font-weight: bold;
+        color: #333;
+    }
+    .result-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="voting-container">
+    <h1>Voting</h1>
+    <form method="POST" action="{{ url_for('select_broadcast_for_voting') }}">
         <label for="broadcast_id">Select Broadcast:</label>
         <select id="broadcast_id" name="broadcast_id" class="form-control" required>
             {% for broadcast in broadcasts %}
                 <option value="{{ broadcast._id }}">{{ broadcast.name }}</option>
             {% endfor %}
         </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Select Broadcast</button>
-</form>
+        <button type="submit" class="btn btn-primary">Select Broadcast</button>
+    </form>
 
-{% if performances %}
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>Учасник</th>
-            <th>Пісня</th>
-            <th>Виступ</th>
-            <th>Послідовність</th>
-            <th>Дії</th>
-        </tr>
-        </thead>
-        <tbody>
-             {% for performance in performances %}
+    {% if performances %}
+        <table class="result-table">
+            <thead>
                 <tr>
-                    <td>
-                        {% set contestant = contestants | selectattr('_id', 'equalto', performance.contestant_id) | first %}{{ contestant.name if contestant else 'Unknown Contestant' }} {{ contestant.surname if contestant else 'Unknown Contestant' }}</td>
-                    <td>
-                        {% set song = songs | selectattr('_id', 'equalto', performance.song_id) | first %}{{ song.name if song else 'Unknown Song' }}</td>
-                    <td>
-                        {% set broadcast = broadcasts | selectattr('_id', 'equalto', performance.broadcast_id) | first %}{{ broadcast.name if broadcast else 'Unknown Broadcast' }}</td>
-                    <td>{{ performance.order }}</td>
-                    <td>
-                        <a href="{{ url_for('vote_performance', performance_id=performance._id) }}" class="btn btn-primary btn-sm">Vote</a>
-                    </td>
-            {% endfor %}
-      </tbody>
-    </table>
-{% endif %}
-<a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-4">Back to Dashboard</a>
+                    <th>Учасник</th>
+                    <th>Пісня</th>
+                    <th>Виступ</th>
+                    <th>Послідовність</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for performance in performances %}
+                    <tr>
+                        <td>
+                            {% set contestant = contestants | selectattr('_id', 'equalto', performance.contestant_id) | first %}
+                            {{ contestant.name if contestant else 'Unknown Contestant' }} {{ contestant.surname if contestant else 'Unknown Contestant' }}
+                        </td>
+                        <td>
+                            {% set song = songs | selectattr('_id', 'equalto', performance.song_id) | first %}
+                            {{ song.name if song else 'Unknown Song' }}
+                        </td>
+                        <td>
+                            {% set broadcast = broadcasts | selectattr('_id', 'equalto', performance.broadcast_id) | first %}
+                            {{ broadcast.name if broadcast else 'Unknown Broadcast' }}
+                        </td>
+                        <td>{{ performance.order }}</td>
+                        <td>
+                            <a href="{{ url_for('vote_performance', performance_id=performance._id) }}" class="btn btn-primary btn-sm">Vote</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-4">Back to Dashboard</a>
+</div>
 {% endblock %}

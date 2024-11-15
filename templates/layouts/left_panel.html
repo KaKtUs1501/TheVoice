@@ -1,37 +1,109 @@
-<div class="list-group">
-    <a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action">Dashboard</a>
-    <a href="{{ url_for('jury') }}" class="list-group-item list-group-item-action">Jury Members</a>
-    <a href="{{ url_for('contestants') }}" class="list-group-item list-group-item-action">Contestants</a>
-    <a href="{{ url_for('songs') }}" class="list-group-item list-group-item-action">Songs</a>
-    <a href="{{ url_for('performances') }}" class="list-group-item list-group-item-action">Performances</a>
-    <a href="{{ url_for('broadcasts') }}" class="list-group-item list-group-item-action">Broadcasts</a>
-    <a href="{{ url_for('voting') }}" class="list-group-item list-group-item-action">Voting</a>
-    <a href="{{ url_for('results') }}" class="list-group-item list-group-item-action">Results</a>
-    {% if session['role'] in ['owner'] %}
-        <a href="{{ url_for('create_collection') }}" class="list-group-item list-group-item-action">Створити Нову Колекцію</a>
-        <a href="{{ url_for('delete_collection') }}" class="list-group-item list-group-item-action">Видалити Колекцію</a>
-     {% endif %}
-    {% if session['role'] in ['administrator'] %}
-        <a href="{{ url_for('manage_users') }}" class="list-group-item list-group-item-action">Управління користувачами</a>
-    {% endif %}
+<div class="sidebar" id="sidebar">
 
-    <div class="list-group-item list-group-item-action">
-        <a class="collapsed" data-toggle="collapse" href="#queriesCollapse" role="button" aria-expanded="false" aria-controls="queriesCollapse">
-            Queries
+
+    <div class="list-group">
+        <div class="logo">
+            <a href="{{ url_for('dashboard') }}">
+                <img src="/static/img/logo.png" alt="Logo">
+            </a>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action">
+            <i class="fas fa-home"></i> <span class="menu-text">Dashboard</span>
         </a>
-        <div class="collapse" id="queriesCollapse">
-            <div class="list-group">
-                <a href="{{ url_for('performers_by_song_and_city') }}" class="list-group-item list-group-item-action">Performers by Song and City</a>
-                <a href="{{ url_for('artists_and_songs_by_broadcast') }}" class="list-group-item list-group-item-action">Artists and Songs by Broadcast</a>
-                <a href="{{ url_for('contestant_performed_songs') }}" class="list-group-item list-group-item-action">Contestant Performed Songs</a>
-                <a href="{{ url_for('contestant_under_200_votes') }}" class="list-group-item list-group-item-action">Contestants Under 200 Votes</a>
-                <a href="{{ url_for('votes_in_first_broadcast') }}" class="list-group-item list-group-item-action">Votes in First Broadcast</a>
-                <a href="{{ url_for('broadcast_schedule') }}" class="list-group-item list-group-item-action">Broadcast Schedule</a>
-                <a href="{{ url_for('max_sms_votes') }}" class="list-group-item list-group-item-action">Max SMS Votes</a>
-                <a href="{{ url_for('winner_of_contest') }}" class="list-group-item list-group-item-action">Winner of Contest</a>
-                <a href="{{ url_for('sms_messages_per_broadcast') }}" class="list-group-item list-group-item-action">SMS Messages Per Broadcast</a>
-                <a href="{{ url_for('calls_from_number') }}" class="list-group-item list-group-item-action">Calls From Number</a>
+        <a href="{{ url_for('jury') }}" class="list-group-item list-group-item-action">
+            <i class="fas fa-gavel"></i> <span class="menu-text">Jury Members</span>
+        </a>
+        <a href="{{ url_for('contestants') }}" class="list-group-item list-group-item-action">
+            <i class="fas fa-users"></i> <span class="menu-text">Contestants</span>
+        </a>
+        <a href="{{ url_for('songs') }}" class="list-group-item list-group-item-action">
+            <i class="fas fa-music"></i> <span class="menu-text">Songs</span>
+        </a>
+        <a href="{{ url_for('performances') }}" class="list-group-item list-group-item-action">
+            <i class="fas fa-microphone"></i> <span class="menu-text">Performances</span>
+        </a>
+        <a href="{{ url_for('broadcasts') }}" class="list-group-item list-group-item-action">
+            <i class="fas fa-tv"></i> <span class="menu-text">Broadcasts</span>
+        </a>
+        <a href="{{ url_for('voting') }}" class="list-group-item list-group-item-action">
+            <i class="fas fa-vote-yea"></i> <span class="menu-text">Voting</span>
+        </a>
+        <a href="{{ url_for('results') }}" class="list-group-item list-group-item-action">
+            <i class="fas fa-chart-bar"></i> <span class="menu-text">Results</span>
+        </a>
+        {% if session['role'] in ['owner'] %}
+            <a href="{{ url_for('create_collection') }}" class="list-group-item list-group-item-action">
+                <i class="fas fa-folder-plus"></i> <span class="menu-text">Створити Нову Колекцію</span>
+            </a>
+            <a href="{{ url_for('delete_collection') }}" class="list-group-item list-group-item-action">
+                <i class="fas fa-folder-minus"></i> <span class="menu-text">Видалити Колекцію</span>
+            </a>
+        {% endif %}
+        {% if session['role'] in ['administrator'] %}
+            <a href="{{ url_for('manage_users') }}" class="list-group-item list-group-item-action">
+                <i class="fas fa-user-cog"></i> <span class="menu-text">Управління користувачами</span>
+            </a>
+        {% endif %}
+
+        <div class="list-group-item list-group-item-action">
+            <a class="collapsed" data-bs-toggle="collapse" href="#queriesCollapse" role="button" aria-expanded="false" aria-controls="queriesCollapse" onclick="toggleSidebarExpand()">
+                <i class="fas fa-search"></i> <span class="menu-text">Queries</span>
+            </a>
+            <div class="collapse collapse-content" id="queriesCollapse">
+                <div class="list-group">
+                    <a href="{{ url_for('performers_by_song_and_city') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-map-marker-alt"></i> <span class="menu-text">Performers by Song and City</span>
+                    </a>
+                    <a href="{{ url_for('artists_and_songs_by_broadcast') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-broadcast-tower"></i> <span class="menu-text">Artists and Songs by Broadcast</span>
+                    </a>
+                    <a href="{{ url_for('contestant_performed_songs') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-headphones"></i> <span class="menu-text">Contestant Performed Songs</span>
+                    </a>
+                    <a href="{{ url_for('contestant_under_200_votes') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-thumbs-down"></i> <span class="menu-text">Contestants Under 200 Votes</span>
+                    </a>
+                    <a href="{{ url_for('votes_in_first_broadcast') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-poll"></i> <span class="menu-text">Votes in First Broadcast</span>
+                    </a>
+                    <a href="{{ url_for('broadcast_schedule') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-calendar-alt"></i> <span class="menu-text">Broadcast Schedule</span>
+                    </a>
+                    <a href="{{ url_for('max_sms_votes') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-sms"></i> <span class="menu-text">Max SMS Votes</span>
+                    </a>
+                    <a href="{{ url_for('winner_of_contest') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-trophy"></i> <span class="menu-text">Winner of Contest</span>
+                    </a>
+                    <a href="{{ url_for('sms_messages_per_broadcast') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-envelope"></i> <span class="menu-text">SMS Messages Per Broadcast</span>
+                    </a>
+                    <a href="{{ url_for('calls_from_number') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-phone"></i> <span class="menu-text">Calls From Number</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
+    <a href="{{ url_for('logout') }}" class="logout">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="logout-text">Logout</span>
+    </a>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleSidebarExpand() {
+        const sidebar = document.getElementById('sidebar');
+        const queriesCollapse = document.getElementById('queriesCollapse');
+
+        // Add event listener for the collapse event
+        queriesCollapse.addEventListener('shown.bs.collapse', function () {
+            sidebar.classList.add('expanded'); // Expand sidebar when Queries is open
+        });
+
+        queriesCollapse.addEventListener('hidden.bs.collapse', function () {
+            sidebar.classList.remove('expanded'); // Revert sidebar when Queries is closed
+        });
+    }
+</script>

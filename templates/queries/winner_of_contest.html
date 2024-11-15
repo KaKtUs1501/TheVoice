@@ -1,11 +1,51 @@
 {% extends 'base.html' %}
 {% block title %}Winner of the Contest{% endblock %}
+
 {% block content %}
+<style>
+    .results-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .results-container h1, .results-container h2 {
+        text-align: center;
+        font-weight: bold;
+        color: #333;
+    }
+    .results-container h2 {
+        margin-top: 20px;
+        font-size: 1.5rem;
+    }
+    .result-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+    .result-table th {
+        background-color: #f8f9fc;
+        font-weight: bold;
+        color: #333;
+    }
+    .result-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="results-container">
     <h1>Contest Results</h1>
 
     <h2>Winner</h2>
     {% if winner %}
-        <table class="table table-bordered">
+        <table class="result-table">
             <thead>
             <tr>
                 <th>Ім'я</th>
@@ -33,7 +73,7 @@
 
     <h2>Second Place</h2>
     {% if second_place %}
-        <table class="table table-bordered">
+        <table class="result-table">
             <thead>
             <tr>
                 <th>Ім'я</th>
@@ -61,7 +101,7 @@
 
     <h2>Third Place</h2>
     {% if third_place %}
-        <table class="table table-bordered">
+        <table class="result-table">
             <thead>
             <tr>
                 <th>Ім'я</th>
@@ -86,4 +126,5 @@
     {% else %}
         <p>No contestant for third place.</p>
     {% endif %}
+</div>
 {% endblock %}
