@@ -1,26 +1,132 @@
 {% extends 'base.html' %}
-{% block title %}Winner of Contest{% endblock %}
+{% block title %}Переможці{% endblock %}
+
 {% block content %}
-<h1>Winner of Contest</h1>
-<form method="POST">
-    <button type="submit">Search</button>
-</form>
-{% if winner %}
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Ім'я</th>
-            <th>Прізвище</th>
-            <th>Всього голосів</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>{{ winner.name }}</td>
-            <td>{{ winner.surname }}</td>
-            <td>{{ total_votes }}</td>
-        </tr>
-    </tbody>
-</table>
-{% endif %}
+<style>
+    .results-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .results-container h1, .results-container h2 {
+        text-align: center;
+        font-weight: bold;
+        color: #333;
+    }
+    .results-container h2 {
+        margin-top: 20px;
+        font-size: 1.5rem;
+    }
+    .result-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+    .result-table th {
+        background-color: #f8f9fc;
+        font-weight: bold;
+        color: #333;
+    }
+    .result-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="results-container">
+    <h1>Результати</h1>
+
+    <h2>Переможець</h2>
+    {% if winner %}
+        <table class="result-table">
+            <thead>
+            <tr>
+                <th>Ім'я</th>
+                <th>Прізвище</th>
+                <th>Телефонні Голоси</th>
+                <th>SMS Голоси</th>
+                <th>Бали від Журі</th>
+                <th>Загальна Кількість Голосів</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ winner.contestant.name }}</td>
+                <td>{{ winner.contestant.surname }}</td>
+                <td>{{ winner.phone_votes }}</td>
+                <td>{{ winner.sms_votes }}</td>
+                <td>{{ winner.jury_score }}</td>
+                <td>{{ winner.total_votes }}</td>
+            </tr>
+            </tbody>
+        </table>
+    {% else %}
+        <p>Переможця не знайдено.</p>
+    {% endif %}
+
+    <h2>Друге місце</h2>
+    {% if second_place %}
+        <table class="result-table">
+            <thead>
+            <tr>
+                <th>Ім'я</th>
+                <th>Прізвище</th>
+                <th>Телефонні Голоси</th>
+                <th>SMS Голоси</th>
+                <th>Бали від Журі</th>
+                <th>Загальна Кількість Голосів</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ second_place.contestant.name }}</td>
+                <td>{{ second_place.contestant.surname }}</td>
+                <td>{{ second_place.phone_votes }}</td>
+                <td>{{ second_place.sms_votes }}</td>
+                <td>{{ second_place.jury_score }}</td>
+                <td>{{ second_place.total_votes }}</td>
+            </tr>
+            </tbody>
+        </table>
+    {% else %}
+        <p>Немає переможця на другому місці.</p>
+    {% endif %}
+
+    <h2>Третє місце</h2>
+    {% if third_place %}
+        <table class="result-table">
+            <thead>
+            <tr>
+                <th>Ім'я</th>
+                <th>Прізвище</th>
+                <th>Телефонні Голоси</th>
+                <th>SMS Голоси</th>
+                <th>Бали від Журі</th>
+                <th>Загальна Кількість Голосів</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ third_place.contestant.name }}</td>
+                <td>{{ third_place.contestant.surname }}</td>
+                <td>{{ third_place.phone_votes }}</td>
+                <td>{{ third_place.sms_votes }}</td>
+                <td>{{ third_place.jury_score }}</td>
+                <td>{{ third_place.total_votes }}</td>
+            </tr>
+            </tbody>
+        </table>
+    {% else %}
+        <p>Немає переможця на третьому місці.</p>
+    {% endif %}
+</div>
+    <a href="{{ url_for('home') }} " class="btn btn-secondary">До головного меню</a>
+
 {% endblock %}

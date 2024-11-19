@@ -1,31 +1,100 @@
-
 {% extends 'base.html' %}
-{% block title %}Contestant Performed Songs{% endblock %}
+{% block title %}Виконані пісні{% endblock %}
+
 {% block content %}
-<h1>Contestant Performed Songs</h1>
-<form method="POST">
-    <label for="contestant_id">Contestant:</label>
-    <select id="contestant_id" name="contestant_id">
-        {% for contestant in contestants %}
-        <option value="{{ contestant._id }}">{{ contestant.name }} {{ contestant.surname }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit">Search</button>
-</form>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Пісня</th>
-            <th>Виконано</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for song, count in song_data.items() %}
-        <tr>
-            <td>{{ song }}</td>
-            <td>{{ count }} разів</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<style>
+    .performances-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .performances-container h1 {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .performances-container label {
+        font-weight: 500;
+        color: #555;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .performances-container select,
+    .performances-container button {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+    .performances-container button {
+        background-color: #4e73df;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .performances-container button:hover {
+        background-color: #2e59d9;
+    }
+    .result-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+    .result-table th {
+        background-color: #f8f9fc;
+        font-weight: bold;
+        color: #333;
+    }
+    .result-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="performances-container">
+    <h1>Виконані пісні</h1>
+    <form method="POST">
+        <label for="contestant_id">Конкурсант:</label>
+        <select id="contestant_id" name="contestant_id">
+            {% for contestant in contestants %}
+            <option value="{{ contestant._id }}">{{ contestant.name }} {{ contestant.surname }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Пошук</button>
+    </form>
+    <a href="{{ url_for('home') }}" class="btn btn-secondary">До головного меню</a>
+
+</div>
+
+{% if song_data %}
+    <table class="result-table">
+        <thead>
+            <tr>
+                <th>Пісня</th>
+                <th>Виконано</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for song, count in song_data.items() %}
+            <tr>
+                <td>{{ song }}</td>
+                <td>{{ count }} разів</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
 {% endblock %}

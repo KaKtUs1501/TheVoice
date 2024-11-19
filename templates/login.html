@@ -1,33 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <style>
+        /* Custom styles for the login form */
+        .login-container {
+            margin-top: 5rem;
+        }
+        .card {
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .text-muted {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .font-weight-bold {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
 
-{% extends 'base.html' %}
-{% block title %}Login{% endblock %}
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <h1>Login</h1>
-        <form method="POST" action="{{ url_for('login') }}">
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" class="form-control" required>
+        /* Input Styling */
+        .form-group label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 0.2rem;
+        }
+        .form-control {
+            border: none;
+            border-bottom: 1px solid #ccc;
+            border-radius: 0;
+            padding: 0.5rem 8px;
+            box-shadow: none;
+            background-color: transparent; /* Ensures no background */
+        }
+        .form-control:focus {
+            border-bottom-color: #007bff;
+            outline: none;
+            box-shadow: none; /* Removes default blue box-shadow */
+            background-color: transparent; /* Keeps background transparent */
+        }
+
+        .form-control:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 1000px white inset; /* Forces a white background */
+            box-shadow: 0 0 0 1000px white inset;
+            -webkit-text-fill-color: #000; /* Ensures the text color is correct */
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+
+        /* Submit Button */
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Footer Text */
+        .text-center p {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container login-container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card">
+                <h6 class="text-center text-muted">Введіть Ваші дані</h6>
+                <h2 class="text-center font-weight-bold">Вітаємо!</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <ul class="flashes">
+                            {% for category, message in messages %}
+                                <li class="{{ category }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+                <form method="POST" action="{{ url_for('login') }}" class="mt-4">
+                    <div class="form-group mb-4">
+                        <label for="username">Логін</label>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="Ваш логін" required>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="password">Пароль</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="{{ url_for('forgot_password') }}" class="text-decoration-none">Забули пароль</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-3">Вхід</button>
+                    <p class="text-center mt-3">Не маєте облікового запису <a href="{{ url_for('register') }}" class="text-decoration-none">Зареєструватись</a></p>
+                </form>
             </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-        </form>
-        <a href="{{ url_for('register') }}">Register</a>
-        <br>
-        <a href="{{ url_for('forgot_password') }}">Forgot Password</a>
+        </div>
     </div>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <ul class="flashes">
-              {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
 </div>
-{% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

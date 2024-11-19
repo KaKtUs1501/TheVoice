@@ -1,5 +1,24 @@
 {% extends 'base.html' %}
 {% block title %}Voting{% endblock %}
+
 {% block content %}
+<style>
+    .alert-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff3f3;
+        color: #d9534f;
+        border: 1px solid #d9534f;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="alert-container">
     Недостатньо прав для виконання запиту
+</div>
 {% endblock %}

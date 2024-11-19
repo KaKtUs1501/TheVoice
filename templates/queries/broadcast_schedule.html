@@ -1,25 +1,66 @@
 {% extends 'base.html' %}
-{% block title %}Broadcast Schedule{% endblock %}
+{% block title %}Розклад прямих ефірів{% endblock %}
+
 {% block content %}
-<h1>Broadcast Schedule</h1>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Назва</th>
-            <th>Дата</th>
-            <th>Тривалість</th>
-            <th>Опис</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for broadcast in broadcasts %}
-        <tr>
-            <td>{{ broadcast.name }}</td>
-            <td>{{ broadcast.date_of_live }}</td>
-            <td>{{ broadcast.duration }}</td>
-            <td>{{ broadcast.description }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<style>
+    .schedule-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .schedule-container h1 {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    .schedule-table th, .schedule-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+    .schedule-table th {
+        background-color: #f8f9fc;
+        font-weight: bold;
+        color: #333;
+    }
+    .schedule-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="schedule-container">
+    <h1>Розклад прямих ефірів</h1>
+    <a href="{{ url_for('home') }}" class="btn btn-secondary">До головного меню</a>
+
+    <table class="schedule-table">
+        <thead>
+            <tr>
+                <th>Назва</th>
+                <th>Дата</th>
+                <th>Тривалість</th>
+                <th>Опис</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for broadcast in broadcasts %}
+            <tr>
+                <td>{{ broadcast.name }}</td>
+                <td>{{ broadcast.date_of_live }}</td>
+                <td>{{ broadcast.duration }}</td>
+                <td>{{ broadcast.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

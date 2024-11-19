@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Artists and Songs by Broadcast{% endblock %}
+{% block content %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <h2 class="text-center font-weight-bold">Створення користувача</h2>
+    <form method="POST" action="{{ url_for('user_add') }}" class="mt-4">
+        <div class="form-group mb-4">
+            <label for="username">Логін</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Введіть логін" required>
+        </div>
+        <div class="form-group mb-4">
+            <label for="email">Електронна пошта</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Введіть електронну адресу" required>
+        </div>
+        <div class="form-group mb-4">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Введіть пароль" required>
+        </div>
+        <div class="form-group mb-4">
+            <label for="role">Роль</label>
+            <select id="role" name="role" class="form-control" required>
+                {% if session['role'] in ['owner'] %}
+                <option value="administrator">Адміністратор</option>
+                {% endif %}
+                <option value="operator">Оператор</option>
+                <option value="user">Користувач</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary mb-3">Створити</button>
+    </form>
+    <a href="{{ url_for('manage_users') }}" class="btn btn-secondary">Назад</a>
+
+
+{% endblock %}

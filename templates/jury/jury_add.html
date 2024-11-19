@@ -1,40 +1,128 @@
 {% extends 'base.html' %}
-{% block title %}Add Jury Member{% endblock %}
+{% block title %}Додати члени журі{% endblock %}
+
 {% block content %}
-<h1>Add Jury Member</h1>
-{% if error_message %}
-    <div class="alert alert-danger">{{ error_message }}</div>
-{% endif %}
-<form method="POST" action="{{ url_for('add_jury') }}">
-    <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" class="form-control" value="{{ request.form.get('name', '') }}" required>
-    </div>
-    <div class="form-group">
-        <label for="surname">Surname:</label>
-        <input type="text" id="surname" name="surname" class="form-control" value="{{ request.form.get('surname', '') }}" required>
-    </div>
-    <div class="form-group">
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="age" class="form-control" value="{{ request.form.get('age', '') }}" required>
-    </div>
-    <div class="form-group">
-        <label for="city">City:</label>
-        <input type="text" id="city" name="city" class="form-control" value="{{ request.form.get('city', '') }}" required>
-    </div>
-    <div class="form-group">
-        <label for="birth">Birth Date:</label>
-        <input type="date" id="birth" name="birth" class="form-control" value="{{ request.form.get('birth', '') }}" required>
-    </div>
-    <div class="form-group">
-        <label for="phone_number">Phone Number:</label>
-        <input type="text" id="phone_number" name="phone_number" class="form-control" value="{{ request.form.get('phone_number', '') }}" required>
-    </div>
-    <div class="form-group">
-        <label for="position">Position:</label>
-        <input type="text" id="position" name="position" class="form-control" value="{{ request.form.get('position', '') }}" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Add Jury Member</button>
-</form>
-<a href="{{ url_for('jury') }}" class="btn btn-secondary mt-3">Back to Jury Members</a>
+<style>
+    /* Unique styles for Add Jury Member page */
+    .unique-add-jury-header {
+        font-size: 2.2rem;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+    .unique-add-form {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .unique-form-group {
+        margin-bottom: 15px;
+    }
+    .unique-form-group label {
+        font-weight: 500;
+        color: #555;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .unique-form-control {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        color: #333;
+        background-color: #f9f9f9;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+    }
+    .unique-form-control:focus {
+        border-color: #4e73df;
+        outline: none;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+    .unique-alert-danger {
+        padding: 10px;
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    .unique-btn-primary {
+        background-color: #4e73df;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        transition: background-color 0.2s ease;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .unique-btn-primary:hover {
+        background-color: #2e59d9;
+    }
+    .unique-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .unique-btn-secondary:hover {
+        background-color: #5a6268;
+    }
+</style>
+
+<div class="unique-add-form mt-4">
+    <h1 class="unique-add-jury-header">Додавання журі</h1>
+
+    {% if error_message %}
+        <div class="unique-alert-danger">{{ error_message }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('add_jury') }}">
+        <div class="unique-form-group">
+            <label for="name">Ім'я:</label>
+            <input type="text" id="name" name="name" class="unique-form-control" value="{{ request.form.get('name', '') }}" required>
+        </div>
+
+        <div class="unique-form-group">
+            <label for="surname">Прізвище:</label>
+            <input type="text" id="surname" name="surname" class="unique-form-control" value="{{ request.form.get('surname', '') }}" required>
+        </div>
+
+        <div class="unique-form-group">
+            <label for="age">Вік:</label>
+            <input type="number" id="age" name="age" class="unique-form-control" value="{{ request.form.get('age', '') }}" required>
+        </div>
+
+        <div class="unique-form-group">
+            <label for="city">Місто:</label>
+            <input type="text" id="city" name="city" class="unique-form-control" value="{{ request.form.get('city', '') }}" required>
+        </div>
+
+        <div class="unique-form-group">
+            <label for="birth">Дата народження:</label>
+            <input type="date" id="birth" name="birth" class="unique-form-control" value="{{ request.form.get('birth', '') }}" required>
+        </div>
+
+        <div class="unique-form-group">
+            <label for="phone_number">Номер телефону:</label>
+            <input type="text" id="phone_number" name="phone_number" class="unique-form-control" value="{{ request.form.get('phone_number', '') }}" required>
+        </div>
+
+        <div class="unique-form-group">
+            <label for="position">Статус:</label>
+            <input type="text" id="position" name="position" class="unique-form-control" value="{{ request.form.get('position', '') }}" required>
+        </div>
+
+        <button type="submit" class="unique-btn-primary">Додати журі</button>
+        <a href="{{ url_for('jury') }}" class="unique-btn-secondary">Назад</a>
+    </form>
+</div>
 {% endblock %}

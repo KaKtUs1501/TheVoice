@@ -1,26 +1,84 @@
 {% extends 'base.html' %}
-{% block title %}Contestants Under 200 Votes{% endblock %}
+{% block title %}Хто набрав менше 200 балів{% endblock %}
+
 {% block content %}
-<h1>Contestants Under 200 Votes</h1>
-<form method="POST">
-    <button type="submit">Search</button>
-</form>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Ім'я</th>
-            <th>Прізвище</th>
-            <th>Місто</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for contestant in contestants %}
-        <tr>
-            <td>{{ contestant.name }}</td>
-            <td>{{ contestant.surname }}</td>
-            <td>{{ contestant.city }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<style>
+    .votes-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .votes-container h1 {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .votes-container button {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        color: white;
+        background-color: #4e73df;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .votes-container button:hover {
+        background-color: #2e59d9;
+    }
+    .result-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+    .result-table th {
+        background-color: #f8f9fc;
+        font-weight: bold;
+        color: #333;
+    }
+    .result-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="votes-container">
+    <h1>Конкурсанти до 200 голосів</h1>
+    <form method="POST">
+        <button type="submit">Пошук</button>
+    </form>
+    <a href="{{ url_for('home') }}" class="btn btn-secondary">До головного меню</a>
+
+</div>
+
+{% if contestants %}
+    <table class="result-table">
+        <thead>
+            <tr>
+                <th>Ім'я</th>
+                <th>Прізвище</th>
+                <th>Місто</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contestant in contestants %}
+            <tr>
+                <td>{{ contestant.name }}</td>
+                <td>{{ contestant.surname }}</td>
+                <td>{{ contestant.city }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
 {% endblock %}

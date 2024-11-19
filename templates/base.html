@@ -2,21 +2,20 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body>
-    {% include 'layouts/header.html' %}
+<body style="overflow-x: hidden">
     <div class="row">
         <div class="col-md-3">
             {% include 'layouts/left_panel.html' %}
         </div>
-        <div class="col-md-9">
+        <div class="col-md-6" style="margin-top: 40px">
             {% block content %}{% endblock %}
         </div>
     </div>
-
 </body>
 </html>

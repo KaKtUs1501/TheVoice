@@ -1,34 +1,133 @@
-
 {% extends 'base.html' %}
-{% block title %}{% endblock %}
+{% block title %}Пошук Пісень{% endblock %}
+
 {% block content %}
-<h1>Пошук Пісень</h1>
+<style>
+    .search-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .search-container h1 {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .flashes {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .flashes li {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        color: white;
+        text-align: center;
+    }
+    .flashes .success {
+        background-color: #28a745;
+    }
+    .flashes .error {
+        background-color: #dc3545;
+    }
+    .search-container label {
+        font-weight: 500;
+        color: #555;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .search-container input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+    .search-container button {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        color: white;
+        background-color: #4e73df;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .search-container button:hover {
+        background-color: #2e59d9;
+    }
+    .result-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+    .result-table th {
+        background-color: #f8f9fc;
+        font-weight: bold;
+        color: #333;
+    }
+    .result-table td {
+        background-color: #ffffff;
+    }
+    .action-links a {
+        color: #007bff;
+        margin: 0 5px;
+        font-size: 1.2rem;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    .action-links a:hover {
+        color: #0056b3;
+    }
+</style>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <ul class="flashes">
-      {% for category, message in messages %}
-        <li class="{{ category }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
+<div class="search-container">
+    <h1>Пошук Пісень</h1>
 
-<form method="POST" action="{{ url_for('search_songs') }}">
-    <label for="name">Назва Пісні:</label>
-    <input type="text" id="name" name="name" placeholder="Введіть назву пісні">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
 
-    <label for="author">Автор:</label>
-    <input type="text" id="author" name="author" placeholder="Введіть автора">
+    <form method="POST" action="{{ url_for('search_songs') }}">
+        <label for="name">Назва Пісні:</label>
+        <input type="text" id="name" name="name" placeholder="Введіть назву пісні">
 
-    <label for="genre">Жанр:</label>
-    <input type="text" id="genre" name="genre" placeholder="Введіть жанр">
+        <label for="author">Автор:</label>
+        <input type="text" id="author" name="author" placeholder="Введіть автора">
 
-    <button type="submit">Пошук</button>
-</form>
+        <label for="genre">Жанр:</label>
+        <input type="text" id="genre" name="genre" placeholder="Введіть жанр">
+
+        <button type="submit">Пошук</button>
+    </form>
+<div class="d-flex justify-content-start mt-3">
+        <a href="{{ url_for('songs') }}" class="btn btn-secondary">Назад</a>
+    </div>
+</div>
 
 {% if results %}
-    <table>
+    <table class="result-table">
         <thead>
             <tr>
                 <th>Назва</th>
@@ -43,11 +142,17 @@
                 <td>{{ song.name }}</td>
                 <td>{{ song.author }}</td>
                 <td>{{ song.genre }}</td>
-                <td>
-                    <a href="{{ url_for('view_song', song_id=song._id) }}">Переглянути</a>
+                <td class="action-links">
+                    <a href="{{ url_for('view_song', song_id=song._id) }}" title="Переглянути">
+                        <i class="fas fa-eye"></i>
+                    </a>
                     {% if session['role'] in ['owner', 'administrator', 'operator'] %}
-                        | <a href="{{ url_for('edit_song', song_id=song._id) }}">Редагувати</a>
-                        | <a href="{{ url_for('delete_song', song_id=song._id) }}" onclick="return confirm('Ви впевнені, що хочете видалити цю пісню?')">Видалити</a>
+                        <a href="{{ url_for('edit_song', song_id=song._id) }}" title="Редагувати">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ url_for('delete_song', song_id=song._id) }}" onclick="return confirm('Ви впевнені, що хочете видалити цю пісню?');" title="Видалити">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
                     {% endif %}
                 </td>
             </tr>
